@@ -15,7 +15,7 @@ class Solution{
 		int[] count = new int[100000001];
 		for (int[] value : list) {
 			count[value[1]]++;
-        }
+        	}
 		
 		int i = 1;
 		int remove = 0;

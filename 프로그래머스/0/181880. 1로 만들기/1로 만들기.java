@@ -1,23 +1,12 @@
 class Solution {
-    public int count = 0;
-	
-	public int solution(int[] num_list) {
+    public int solution(int[] num_list) {
+        int answer = 0;
         for (int num : num_list) {
-        	cal(num);
+        	while (num != 1) {
+        		num /= 2;
+        		answer++;
+        	}
         }
-        return count;
+        return answer;
     }
-	
-	public void cal(int n) {
-		if (n == 1){
-			return;
-		} else if (n % 2 == 0) {
-			n /= 2;
-		} else {
-			n = (n - 1) / 2;
-		}
-		
-		count++;
-		cal(n);
-	}
 }

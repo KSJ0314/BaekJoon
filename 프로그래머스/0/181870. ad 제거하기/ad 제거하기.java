@@ -1,10 +1,9 @@
-import java.util.stream.IntStream;
+import java.util.*;
 
 class Solution {
     public String[] solution(String[] strArr) {
-        return IntStream.range(0, strArr.length)
-        			.filter(i -> !strArr[i].contains("ad"))
-        			.mapToObj(i -> strArr[i])
+        return Arrays.stream(strArr)
+        			.filter(str -> !str.contains("ad"))
         			.toArray(String[]::new);
     }
 }

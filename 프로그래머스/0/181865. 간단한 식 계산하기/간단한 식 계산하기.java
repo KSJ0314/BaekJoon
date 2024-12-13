@@ -6,12 +6,13 @@ class Solution {
 		String op = biStr[1];
 		int b = Integer.valueOf(biStr[2]);
 		
-		if (op.equals("+")) {
-			return a+b;
-		} else if (op.equals("-")) {
-			return a-b;
-		} else {
-			return a*b;
+		switch (op) {
+			case "+":
+				return a+b;
+			case "-":
+				return a-b;
+			default:
+				return a*b;
 		}
     }
 }

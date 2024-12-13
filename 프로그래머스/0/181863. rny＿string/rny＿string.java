@@ -1,5 +1,5 @@
 class Solution {
     public String solution(String rny_string) {
-        return rny_string.replace("m", "rn");
+        return String.join("rn", rny_string.split("m", -1));
     }
 }

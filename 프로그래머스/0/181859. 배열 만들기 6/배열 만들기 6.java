@@ -2,17 +2,17 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] arr) {
-        Stack<Integer> stack = new Stack<>();
+        Deque<Integer> deq = new ArrayDeque<>();
         
         for (int i : arr) {
-        	if (!stack.isEmpty() && stack.peek() == i) {
-        		stack.pop();
+        	if (!deq.isEmpty() && deq.peekLast() == i) {
+        		deq.removeLast();
         	} else {
-        		stack.push(i);
+        		deq.addLast(i);
         	}
         }
         
-        return stack.isEmpty() ? new int[] {-1} 
-        		: stack.stream().mapToInt(Integer::intValue).toArray();
+        return deq.isEmpty() ? new int[] {-1} 
+        		: deq.stream().mapToInt(Integer::intValue).toArray();
     }
 }

@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.stream.IntStream;
 
 class Solution {
     public int solution(String[] strArr) {
@@ -6,6 +6,6 @@ class Solution {
         for (String str : strArr) {
         	arrLength[str.length()]++;
         }
-        return Arrays.stream(arrLength).max().getAsInt();
+        return IntStream.of(arrLength).max().orElseThrow();
     }
 }

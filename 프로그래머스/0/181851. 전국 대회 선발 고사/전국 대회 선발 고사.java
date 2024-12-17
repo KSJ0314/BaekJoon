@@ -2,21 +2,21 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] rank, boolean[] attendance) {
-        ArrayList<Integer> list = new ArrayList<>();
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
 		
-		for (int i = 0; i < attendance.length; i++) {
+		for (int i = 0; i < rank.length; i++) {
 			if (attendance[i]) {
-				int j = 0;
-				for (int num : list) {
-					if (rank[num] > rank[i]) {
-						break;
-					}
-					j++;
-				}
-				list.add(j, i);
+				treeMap.put(rank[i], i);
 			}
 		}
-        
-		return list.get(0)*10000 + list.get(1)*100 + list.get(2);
+		
+		int answer = 0;
+		int op = 10000;
+		for (int value : treeMap.values()) {
+			answer += value*op;
+			op /= 100;
+			if (op == 0) break;
+		}
+		return answer;
 	}
 }

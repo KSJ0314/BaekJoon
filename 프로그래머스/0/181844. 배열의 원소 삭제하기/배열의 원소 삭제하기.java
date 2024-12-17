@@ -4,14 +4,13 @@ class Solution {
     public int[] solution(int[] arr, int[] delete_list) {
         ArrayList<Integer> list = new ArrayList<>();
         
-        O : for (int i : arr) {
-        	for (int j : delete_list) {
-        		if (i == j) {
-        			continue O;
-        		}
-        	}
+        for (int i : arr) {
         	list.add(i);
         }
+        for (int i : delete_list) {
+        	list.remove(Integer.valueOf(i));
+        }
+        
         return list.stream().mapToInt(Integer::intValue).toArray();
     }
 }

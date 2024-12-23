@@ -2,18 +2,14 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] arr, int k) {
-        Deque<Integer> deq = new ArrayDeque<>();
-		for (int i : arr) {
-			if (!deq.contains(i)) {
-				deq.addLast(i);
-				if (deq.size() == k) {
-					break;
-				}
-			}
+        arr = Arrays.stream(arr).distinct().limit(k).toArray();
+		int[] answer = new int[k];
+		for (int i = 0; i < arr.length; i++) {
+			answer[i] = arr[i];
 		}
-		while (deq.size() < k) {
-			deq.addLast(-1);
+		for (int i = arr.length; i < k; i++) {
+			answer[i] = -1;
 		}
-        return deq.stream().mapToInt(Integer::intValue).toArray();
+        return answer;
     }
 }

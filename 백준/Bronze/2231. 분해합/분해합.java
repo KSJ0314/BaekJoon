@@ -9,8 +9,10 @@ public class Main {
 		int result = 0;
 		for (int i = 1; i <= N; i++) {
 			int temp = i;
-			for (String str : String.valueOf(i).split("")) {
-				temp += Integer.valueOf(str);
+			int temp2 = i;
+			while (temp2 > 0) {
+				temp += temp2%10;
+				temp2/=10;
 			}
 			if (temp == N) {
 				result = result == 0 ? i : Math.min(result, i);

@@ -17,9 +17,11 @@ public class Main {
 		}
 		Arrays.sort(arr);
 		
+		StringBuilder sb = new StringBuilder();
 		for (int i : arr) {
-			System.out.println(i);
+			sb.append(i).append("\n");
 		}
+		System.out.println(sb.toString());
 	}
 
 }

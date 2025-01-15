@@ -18,12 +18,15 @@ public class Main {
 			members[idx].append(inputStr[1]+",");
 		}
 		
+		StringBuilder resultSb = new StringBuilder();
 		for (int i = 0; i <= 200; i++) {
 			if (members[i] == null) continue;
 			for (String member : members[i].toString().split(",")) {
-				System.out.println(i+" "+ member);
+				resultSb.append(i+" "+ member+"\n");
 			}
 		}
+		
+		System.out.println(resultSb.toString());
 		
 	}
 }

@@ -8,19 +8,19 @@ public class Main {
 		
 		int N = Integer.parseInt(br.readLine());
 		
-		String[] members = new String[201];
+		StringBuilder[] members = new StringBuilder[201];
 		
 		String[] inputStr;
 		for (int i = 0; i < N; i++) {
 			inputStr = br.readLine().split(" ");
 			int idx = Integer.parseInt(inputStr[0]);
-			if (members[idx] == null) members[idx] = "";
-			members[idx] += inputStr[1]+",";
+			if (members[idx] == null) members[idx] = new StringBuilder();
+			members[idx].append(inputStr[1]+",");
 		}
 		
 		for (int i = 0; i <= 200; i++) {
 			if (members[i] == null) continue;
-			for (String member : members[i].split(",")) {
+			for (String member : members[i].toString().split(",")) {
 				System.out.println(i+" "+ member);
 			}
 		}

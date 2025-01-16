@@ -1,15 +1,13 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(br.readLine());
-		HashSet<String> set = new HashSet<>();
+		TreeSet<String> set = new TreeSet<>(Comparator.reverseOrder());
 		
 		String[] inputStrArr;
 		for (int i = 0; i < N; i++) {
@@ -21,11 +19,8 @@ public class Main {
 			}
 		}
 		
-		List<String> list = new ArrayList<>(set);
-		Collections.sort(list, Collections.reverseOrder());
-		
 		StringBuilder sb = new StringBuilder();
-		for (String str : list) {
+		for (String str : set) {
 			sb.append(str+"\n");
 		}
 		System.out.println(sb.toString());

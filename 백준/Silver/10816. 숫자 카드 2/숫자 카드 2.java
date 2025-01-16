@@ -1,36 +1,33 @@
 import java.io.*;
-import java.util.*;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		// int N = Integer.parseInt(br.readLine());
-		
-		HashMap<Integer, Integer> map = new HashMap<>();
+		int[] numArr = new int[20000001];
 		
 		br.readLine();
 		String[] inputStrArr = br.readLine().split(" ");
 		
 		for (String str : inputStrArr) {
 			int i = Integer.parseInt(str);
-			if (!map.containsKey(i)) {
-				map.put(i, 0);
+			if (i < 0) {
+				i= i*(-1)+10000000;
 			}
-			map.put(i, map.get(i)+1);
+			numArr[i]++;
 		}
+		
+		StringBuilder sb = new StringBuilder();
 		
 		br.readLine();
 		inputStrArr = br.readLine().split(" ");
-		
-		StringBuilder sb = new StringBuilder();
 		for (String str : inputStrArr) {
 			int i = Integer.parseInt(str);
-			int result = 0;
-			if (map.containsKey(i)) {
-				result = map.get(i);
+			if (i < 0) {
+				i= i*(-1)+10000000;
 			}
-			sb.append(result+" ");
+			sb.append(numArr[i]+" ");
 		}
 		System.out.println(sb.toString());
 	}

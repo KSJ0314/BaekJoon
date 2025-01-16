@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Main {
 
@@ -11,25 +11,15 @@ public class Main {
 		
 		int N = Integer.parseInt(inputStrArr[0]);
 		int M = Integer.parseInt(inputStrArr[1]);
-//		Map<Integer, ArrayList<String>> map = new HashMap<>();
-		ArrayList<String> list = new ArrayList<>();
+		HashSet<String> set = new HashSet<>();
 		
 		for (int i = 0; i < N; i++) {
-			String inputStr = br.readLine();
-//			int idx = inputStr.charAt(0)-'a';
-//			if (map.get(idx) == null) map.put(idx, new ArrayList<>());
-//			map.get(idx).add(inputStr);
-			list.add(inputStr);
+			set.add(br.readLine());
 		}
 		
 		int count = 0;
 		for (int i = 0; i < M; i++) {
-			String inputStr = br.readLine();
-//			int idx = inputStr.charAt(0)-'a';
-//			if (map.get(idx) != null && map.get(idx).contains(inputStr)) {
-//				count++;
-//			}
-			if (list.contains(inputStr)) {
+			if (set.contains(br.readLine())) {
 				count++;
 			}
 		}

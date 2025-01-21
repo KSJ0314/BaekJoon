@@ -1,26 +1,19 @@
 import java.io.*;
 
 public class Main {
-	
-	public int isPalindrome(String str) {
-		int count = 0;
-		int strL = str.length();
-		for (int i = 0, j = strL-1; i <= strL / 2; i++, j--) {
-			if (str.charAt(i) != str.charAt(j)) {
-				count++;
-				count += Math.min(isPseudo(str, i+1, j), isPseudo(str, i, j-1));
-				break;
-			}
-		}
-		return count;
+	public static int isPalindrome(String str) {
+		return isPalindrome(str, str.length(), 0, str.length()-1, true);
 	}
-	
-	public int isPseudo(String str, int iIdx, int jIdx) {
+	public static int isPalindrome(String str, int l, int iIdx, int jIdx, boolean isContinue) {
 		int count = 0;
-		int strL = str.length()-1;
-		for (int i = iIdx, j = jIdx; i <= strL / 2; i++, j--) {
+		for (int i = iIdx, j = jIdx; i <= l / 2; i++, j--) {
 			if (str.charAt(i) != str.charAt(j)) {
 				count++;
+				if (isContinue) {
+					int front_del = isPalindrome(str, l-1, i+1, j, false);
+					int back_del = isPalindrome(str, l-1, i, j-1, false);
+					count += Math.min(front_del, back_del);
+				}
 				break;
 			}
 		}
@@ -29,15 +22,15 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int T = Integer.parseInt(br.readLine());
-		Main m = new Main();
-		
 		StringBuilder sb = new StringBuilder();
+		int T = Integer.parseInt(br.readLine());
+		
 		for (int tast_case = 1; tast_case <= T; tast_case++) {
 			String str = br.readLine();
-			int count = m.isPalindrome(str);
+			int count = isPalindrome(str);
 			sb.append(count+"\n");
 		}
+		
 		System.out.println(sb.toString());
 	}
 }

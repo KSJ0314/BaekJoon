@@ -5,40 +5,36 @@ public class Main {
 	int[][] dels = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };	// 상 하 좌 우
 	Map<String, Integer> map = new HashMap<>();
 	int min = 11;
-	
-	public int a(char[][] board, int[][] coors, int count) {
-		for (int[] del : dels) {
-			min = Math.min(min, b(board, coors, del, count));
-		}
-		return min;
-	}
 
-	public int b(char[][] board, int[][] coors, int[] del, int count) {
-		if (count > 10) return 11;	// 최대 10회 까지만 체크
-		if (count >= this.min) return 11;	// count가 이미 최소값보다 크면 검사 종료
-		
-		int[][] newCoors = arrCopy(coors);	// 배열은 참조가 전달되기 때문에 수정 시 원본 배열이 변경됨
-		char[][] newBoard = arrCopy(board);	// 원본 수정을 막기 위해 복사해서 사용
-		
-		int r_b = priorityRB(del, newCoors);	// 먼저 굴러갈 구슬 체크
-		boolean[] isGoal = {	// R,B 각각 골인('O'에 도착) 여부 체크
-			rolling(newBoard, newCoors, del, r_b),
-			rolling(newBoard, newCoors, del, r_b^1)
-		};
-		
-		if (isGoal[r_b^1]) {	// B가 골인하면 검사 종료
-			return 11;
-		} else if (isGoal[r_b]) {	// A가 골인
-			return count + 1;
+	public void f(char[][] board, int[][] coors, int count) {
+		for (int[] del : dels) {
+			if (count > 10) continue;	// 최대 10회 까지만 체크
+			if (count >= this.min) continue;	// count가 이미 최소값보다 크면 검사 종료
+			
+			int[][] newCoors = arrCopy(coors);	// 배열은 참조가 전달되기 때문에 수정 시 원본 배열이 변경됨
+			char[][] newBoard = arrCopy(board);	// 원본 수정을 막기 위해 복사해서 사용
+			
+			int r_b = priorityRB(del, newCoors);	// 먼저 굴러갈 구슬 체크
+			boolean[] isGoal = {	// R,B 각각 골인('O'에 도착) 여부 체크
+				rolling(newBoard, newCoors, del, r_b),
+				rolling(newBoard, newCoors, del, r_b^1)
+			};
+			
+			if (isGoal[r_b^1]) {	// B가 골인하면 검사 종료
+				continue;
+			} else if (isGoal[r_b]) {	// A가 골인
+				min = Math.min(min, count + 1);
+				continue;
+			}
+			
+			// 이미 이동했던 좌표에 같거나 큰 횟수로 도착한 경우 검사 종료
+			String coorsToStr = newCoors[0][0]+" "+newCoors[0][1]+" "+newCoors[1][0]+" "+newCoors[1][1];
+			if (map.containsKey(coorsToStr) && map.get(coorsToStr) <= count) {
+				continue;
+			} else map.put(coorsToStr, count);
+			
+			f(newBoard, newCoors, count+1);
 		}
-		
-		// 이미 이동했던 좌표에 같거나 큰 횟수로 도착한 경우 검사 종료
-		String coorsToStr = newCoors[0][0]+" "+newCoors[0][1]+" "+newCoors[1][0]+" "+newCoors[1][1];
-		if (map.containsKey(coorsToStr) && map.get(coorsToStr) <= count) {
-			return 11;
-		} else map.put(coorsToStr, count);
-		
-		return a(newBoard, newCoors, count+1);
 	}
 	
 	// 구슬 굴리기, 골인 여부를 반환
@@ -108,7 +104,7 @@ public class Main {
 		String coorsToStr = coors[0][0]+" "+coors[0][1]+" "+coors[1][0]+" "+coors[1][1];
 		m.map.put(coorsToStr, 0);
 
-		m.a(board, coors, 0);
+		m.f(board, coors, 0);
 		System.out.println(m.min > 10 ? -1 : m.min);
 	}
 

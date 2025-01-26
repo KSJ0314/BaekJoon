@@ -7,81 +7,80 @@ public class Main {
 	int min = 11;
 	
 	public int a(char[][] board, int[][] coors, int count) {
-		if (count >= this.min) {
-			return 12;
-		}
-		int min = 11;
 		for (int[] del : dels) {
-			int b = b(board, coors, del, count);
-			min = Math.min(min, b);
+			min = Math.min(min, b(board, coors, del, count));
 		}
-		this.min = min;
 		return min;
 	}
 
 	public int b(char[][] board, int[][] coors, int[] del, int count) {
-		if (count > 10) return count;
-		int[][] newCoors = arrCopy(coors);
-		char[][] newBoard = arrCopy(board);
-		int r_b = priorityRB(del, newCoors);
-		boolean[] isGoal = {
+		if (count > 10) return 11;	// 최대 10회 까지만 체크
+		if (count >= this.min) return 11;	// count가 이미 최소값보다 크면 검사 종료
+		
+		int[][] newCoors = arrCopy(coors);	// 배열은 참조가 전달되기 때문에 수정 시 원본 배열이 변경됨
+		char[][] newBoard = arrCopy(board);	// 원본 수정을 막기 위해 복사해서 사용
+		
+		int r_b = priorityRB(del, newCoors);	// 먼저 굴러갈 구슬 체크
+		boolean[] isGoal = {	// R,B 각각 골인('O'에 도착) 여부 체크
 			rolling(newBoard, newCoors, del, r_b),
 			rolling(newBoard, newCoors, del, r_b^1)
 		};
 		
-		if (isGoal[r_b^1]) {	// B가 골인
+		if (isGoal[r_b^1]) {	// B가 골인하면 검사 종료
 			return 11;
 		} else if (isGoal[r_b]) {	// A가 골인
 			return count + 1;
 		}
-		String coorsToString = newCoors[0][0]+" "+newCoors[0][1]+" "+newCoors[1][0]+" "+newCoors[1][1];
-		if (map.containsKey(coorsToString) && map.get(coorsToString) < count) {	// 이미 이동했던 좌표
+		
+		// 이미 이동했던 좌표에 같거나 큰 횟수로 도착한 경우 검사 종료
+		String coorsToStr = newCoors[0][0]+" "+newCoors[0][1]+" "+newCoors[1][0]+" "+newCoors[1][1];
+		if (map.containsKey(coorsToStr) && map.get(coorsToStr) <= count) {
 			return 11;
-		}
-		map.put(coorsToString, count);
+		} else map.put(coorsToStr, count);
+		
 		return a(newBoard, newCoors, count+1);
 	}
 	
+	// 구슬 굴리기, 골인 여부를 반환
 	public boolean rolling(char[][] board, int[][] coors, int[] del, int r_b) {
-		board[coors[r_b][0]][coors[r_b][1]] = '.';
+		board[coors[r_b][0]][coors[r_b][1]] = '.';	// 원래 위치에 . 저장
 		while (true) {
 			int ny = coors[r_b][0] + del[0];
 			int nx = coors[r_b][1] + del[1];
-			if (board[ny][nx] == 'O') return true;
-			if (board[ny][nx] != '.') break;
+			if (board[ny][nx] == 'O') return true;	// 골인하면 true 반환
+			if (board[ny][nx] != '.') break;	// 다음 칸이 . 이 아니면 스탑
 			coors[r_b][0] = ny;
 			coors[r_b][1] = nx;
 		}
-		board[coors[r_b][0]][coors[r_b][1]] = r_b == 0 ? 'R' : 'B';
+		board[coors[r_b][0]][coors[r_b][1]] = r_b == 0 ? 'R' : 'B';	// 최종 이동 칸에 R,B 저장
 		return false;
 	}
 	
-	public int[][] arrCopy(int[][] arr){
-		int[][] newArr = new int[arr.length][arr[0].length];
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[0].length; j++) {
-				newArr[i][j] = arr[i][j];
-			}
-		}
-		return newArr;
+	// R,B중 먼저 굴러가는 구슬 체크
+	public int priorityRB(int[] del, int[][] coors) {
+		int y_x = del[1] == 0 ? 0 : 1;
+		boolean smallFirst = del[y_x] < 0;
+		if (smallFirst && coors[0][y_x] < coors[1][y_x] || !smallFirst && coors[0][y_x] > coors[1][y_x]) {
+			return 0;
+		} else return 1;
 	}
-	public char[][] arrCopy(char[][] arr){
-		char[][] newArr = new char[arr.length][arr[0].length];
+	
+	// 2차원 배열 복사
+	public int[][] arrCopy(int[][] arr){
+		int[][] newArr = new int[arr.length][];
 		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[0].length; j++) {
-				newArr[i][j] = arr[i][j];
-			}
+			newArr[i] = Arrays.copyOf(arr[i], arr[i].length);
 		}
 		return newArr;
 	}
 	
-	public int priorityRB(int[] del, int[][] newCoors) {
-		int y_x = del[1] == 0 ? 0 : 1;
-		boolean smallFirst = del[y_x] < 0;
-		if (smallFirst && newCoors[0][y_x] < newCoors[1][y_x] || !smallFirst && newCoors[0][y_x] > newCoors[1][y_x]) {
-			return 0;
+	// 2차원 배열 복사
+	public char[][] arrCopy(char[][] arr){
+		char[][] newArr = new char[arr.length][];
+		for (int i = 0; i < arr.length; i++) {
+			newArr[i] = Arrays.copyOf(arr[i], arr[i].length);
 		}
-		return 1;
+		return newArr;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -106,8 +105,8 @@ public class Main {
 				}
 			}
 		}
-		String coorsToString = coors[0][0]+" "+coors[0][1]+" "+coors[1][0]+" "+coors[1][1];
-		m.map.put(coorsToString, 0);
+		String coorsToStr = coors[0][0]+" "+coors[0][1]+" "+coors[1][0]+" "+coors[1][1];
+		m.map.put(coorsToStr, 0);
 
 		m.a(board, coors, 0);
 		System.out.println(m.min > 10 ? -1 : m.min);

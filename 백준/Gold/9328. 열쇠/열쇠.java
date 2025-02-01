@@ -8,7 +8,6 @@ public class Main {
 	boolean isEnd;
 	int count, h, w;
 	
-	// main()에서 작성하기 번거로워 만든 메서드
 	public int init() throws IOException {
 		String[] inpuStrs = br.readLine().split(" ");
 		h = Integer.parseInt(inpuStrs[0]);
@@ -54,14 +53,14 @@ public class Main {
 		if (!isIn(y, x) || !isEnd) return;
 		
 		char ch = copyArr[y][x];
-		if (ch == '*' || ch == ' ' || (ch >= 'A' && ch <='Z' && !hasKey[ch-'A'])) {
-			return;
-		}
+		if (ch == '*'
+			|| ch == ' '
+			|| (ch >= 'A' && ch <='Z' && !hasKey[ch-'A'])) return;
 		
 		this.arr[y][x] = '.';
 		copyArr[y][x] = ' ';
 		
-		if (ch >= 'a' && ch <= 'z') {	// 소문자(열쇠) 발견시 즉시 종료
+		if (ch >= 'a' && ch <= 'z' && !hasKey[ch-'a']) {	// 소문자(열쇠) 발견시 즉시 종료 (이미 있는 열쇠 제외)
 			hasKey[ch-'a'] = true;
 			isEnd = false;
 			return;

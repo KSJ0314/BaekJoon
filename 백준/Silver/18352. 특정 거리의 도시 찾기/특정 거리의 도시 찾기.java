@@ -5,7 +5,7 @@ public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	StringBuilder sb = new StringBuilder();
 	Map<Integer, List<Integer>> map = new HashMap<>();
-	Map<Integer, Integer> counts = new TreeMap<>();
+	int[] counts;
 	int k, x;
 	
 	public void init() throws IOException {
@@ -14,7 +14,8 @@ public class Main {
 		int m = Integer.parseInt(inpuStrs[1]);
 		k = Integer.parseInt(inpuStrs[2]);
 		x = Integer.parseInt(inpuStrs[3]);
-		counts.put(x, 0);
+		counts = new int[n+1];
+		counts[x] = -1;
 		
 		while (m-- > 0) {
 			inpuStrs = br.readLine().split(" ");
@@ -40,18 +41,17 @@ public class Main {
 		}
 		if (map.get(key) == null) return;
 		for (int value : map.get(key)) {
-			if (!counts.containsKey(value) || counts.get(value) > count) {
-				counts.put(value, count);
+			if (counts[value] == 0 || counts[value] > count) {
+				counts[value] = count;
 				search(value, count+1);
 			}
 		}
 	}
 	
 	public void countAppend() {
-		for (int key : counts.keySet()) {
-			int value = counts.get(key);
-			if (value == k) {
-				sb.append(key).append("\n");
+		for (int i = 0; i < counts.length; i++) {
+			if (counts[i] == k) {
+				sb.append(i).append("\n");
 			}
 		}
 		if (sb.length() == 0) sb.append(-1);

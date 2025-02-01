@@ -5,10 +5,10 @@ public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	StringBuilder sb = new StringBuilder();
 	Map<Integer, List<Integer>> map = new HashMap<>();
-	List<Integer> pkeys = new ArrayList<>();
-	List<Integer> nkeys = new ArrayList<>();
-	Set<Integer> counts = new TreeSet<>();
-	boolean[] isGone;
+	Deque<Integer> pkeys = new ArrayDeque<>();
+	Deque<Integer> nkeys = new ArrayDeque<>();
+	List<Integer> resultList = new ArrayList<>();
+	boolean[] visited;
 	int k, x;
 	
 	public void init() throws IOException {
@@ -17,8 +17,8 @@ public class Main {
         int m = Integer.parseInt(st.nextToken());
         k = Integer.parseInt(st.nextToken());
         x = Integer.parseInt(st.nextToken());
-        isGone = new boolean[n+1];
-        isGone[x] = true;
+        visited = new boolean[n+1];
+        visited[x] = true;
 		
 		while (m-- > 0) {
 			st = new StringTokenizer(br.readLine());
@@ -39,21 +39,22 @@ public class Main {
 	}
 	
 	public void search(int count) {
-		pkeys = List.copyOf(nkeys);
-		nkeys.clear();
-		for (int key : pkeys) {
+		while (!nkeys.isEmpty()) {
+			pkeys.add(nkeys.poll());
+		}
+		while (!pkeys.isEmpty()) {
+			int key = pkeys.poll();
 			if (!map.containsKey(key)) continue;
 			
 			for (int value : map.get(key)) {
-				if (isGone[value]) continue;
+				if (visited[value]) continue;
+				visited[value] = true;
 				
 				if (count == k) {
-					counts.add(value);
-					continue;
+					resultList.add(value);
+				} else {
+					nkeys.add(value);
 				}
-				
-				nkeys.add(value);
-				isGone[value] = true;
 			}
 		}
 		
@@ -63,7 +64,8 @@ public class Main {
 	}
 	
 	public void countAppend() {
-		for (int count : counts) {
+		resultList.sort(Comparator.naturalOrder());
+		for (int count : resultList) {
 			sb.append(count).append("\n");
 		}
 		if (sb.length() == 0) sb.append(-1);

@@ -9,18 +9,18 @@ public class Main {
 	int k, x;
 	
 	public void init() throws IOException {
-		String[] inpuStrs = br.readLine().split(" ");
-		int n = Integer.parseInt(inpuStrs[0]);
-		int m = Integer.parseInt(inpuStrs[1]);
-		k = Integer.parseInt(inpuStrs[2]);
-		x = Integer.parseInt(inpuStrs[3]);
+		StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        k = Integer.parseInt(st.nextToken());
+        x = Integer.parseInt(st.nextToken());
 		counts = new int[n+1];
 		counts[x] = -1;
 		
 		while (m-- > 0) {
-			inpuStrs = br.readLine().split(" ");
-			int sc = Integer.parseInt(inpuStrs[0]);
-			int ec = Integer.parseInt(inpuStrs[1]);
+			st = new StringTokenizer(br.readLine());
+			int sc = Integer.parseInt(st.nextToken());
+			int ec = Integer.parseInt(st.nextToken());
 			mapPut(sc, ec);
 		}
 		

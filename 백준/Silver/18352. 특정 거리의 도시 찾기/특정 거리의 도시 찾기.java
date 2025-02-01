@@ -5,7 +5,10 @@ public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	StringBuilder sb = new StringBuilder();
 	Map<Integer, List<Integer>> map = new HashMap<>();
-	int[] counts;
+	List<Integer> pkeys = new ArrayList<>();
+	List<Integer> nkeys = new ArrayList<>();
+	Set<Integer> counts = new TreeSet<>();
+	boolean[] isGone;
 	int k, x;
 	
 	public void init() throws IOException {
@@ -14,8 +17,8 @@ public class Main {
         int m = Integer.parseInt(st.nextToken());
         k = Integer.parseInt(st.nextToken());
         x = Integer.parseInt(st.nextToken());
-		counts = new int[n+1];
-		counts[x] = -1;
+        isGone = new boolean[n+1];
+        isGone[x] = true;
 		
 		while (m-- > 0) {
 			st = new StringTokenizer(br.readLine());
@@ -23,8 +26,8 @@ public class Main {
 			int ec = Integer.parseInt(st.nextToken());
 			mapPut(sc, ec);
 		}
-		
-		search(x, 1);
+		nkeys.add(x);
+		search(1);
 		countAppend();
 	}
 	
@@ -35,24 +38,33 @@ public class Main {
 		map.get(key).add(value);
 	}
 	
-	public void search(int key, int count) {
-		if (count > k) {
-			return;
-		}
-		if (map.get(key) == null) return;
-		for (int value : map.get(key)) {
-			if (counts[value] == 0 || counts[value] > count) {
-				counts[value] = count;
-				search(value, count+1);
+	public void search(int count) {
+		pkeys = List.copyOf(nkeys);
+		nkeys.clear();
+		for (int key : pkeys) {
+			if (!map.containsKey(key)) continue;
+			
+			for (int value : map.get(key)) {
+				if (isGone[value]) continue;
+				
+				if (count == k) {
+					counts.add(value);
+					continue;
+				}
+				
+				nkeys.add(value);
+				isGone[value] = true;
 			}
+		}
+		
+		if (count < k) {
+			search(count+1);
 		}
 	}
 	
 	public void countAppend() {
-		for (int i = 0; i < counts.length; i++) {
-			if (counts[i] == k) {
-				sb.append(i).append("\n");
-			}
+		for (int count : counts) {
+			sb.append(count).append("\n");
 		}
 		if (sb.length() == 0) sb.append(-1);
 	}

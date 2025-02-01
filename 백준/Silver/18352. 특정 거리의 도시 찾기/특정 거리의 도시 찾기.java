@@ -4,12 +4,12 @@ import java.util.*;
 public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	StringBuilder sb = new StringBuilder();
-	Map<Integer, List<Integer>> map = new HashMap<>();
-	Deque<Integer> pkeys = new ArrayDeque<>();
-	Deque<Integer> nkeys = new ArrayDeque<>();
-	List<Integer> resultList = new ArrayList<>();
+	int[][] map;
+	Deque<Integer> cities = new ArrayDeque<>();
+	int[] results;
 	boolean[] visited;
 	int k, x;
+	int count = 1;
 	
 	public void init() throws IOException {
 		StringTokenizer st = new StringTokenizer(br.readLine());
@@ -19,6 +19,7 @@ public class Main {
         x = Integer.parseInt(st.nextToken());
         visited = new boolean[n+1];
         visited[x] = true;
+        map = new int[n+1][0];
 		
 		while (m-- > 0) {
 			st = new StringTokenizer(br.readLine());
@@ -26,49 +27,48 @@ public class Main {
 			int ec = Integer.parseInt(st.nextToken());
 			mapPut(sc, ec);
 		}
-		nkeys.add(x);
-		search(1);
+		cities.add(x);
+
+		for (int i = 1; i <= k; i++, count++) {
+			visit();
+		}
 		countAppend();
 	}
 	
 	public void mapPut(int key, int value) {
-		if (!map.containsKey(key)) {
-			map.put(key, new ArrayList<>());
-		}
-		map.get(key).add(value);
+		int length = map[key].length;
+		map[key] = Arrays.copyOf(map[key], length + 1);
+		map[key][length] = value;
 	}
 	
-	public void search(int count) {
-		while (!nkeys.isEmpty()) {
-			pkeys.add(nkeys.poll());
-		}
-		while (!pkeys.isEmpty()) {
-			int key = pkeys.poll();
-			if (!map.containsKey(key)) continue;
+	public void visit() {
+		int size = cities.size();
+		while (size-- > 0) {
+			int key = cities.pollFirst();
 			
-			for (int value : map.get(key)) {
+			for (int value : map[key]) {
 				if (visited[value]) continue;
 				visited[value] = true;
-				
-				if (count == k) {
-					resultList.add(value);
-				} else {
-					nkeys.add(value);
-				}
+				cities.addLast(value);
 			}
 		}
-		
-		if (count < k) {
-			search(count+1);
+		if (count == k) {
+			results = new int[cities.size()];
+			for (int i = 0; cities.size() > 0; i++) {
+				results[i] = cities.poll();
+			}
 		}
 	}
 	
 	public void countAppend() {
-		resultList.sort(Comparator.naturalOrder());
-		for (int count : resultList) {
+		Arrays.sort(results);
+		for (int count : results) {
 			sb.append(count).append("\n");
 		}
-		if (sb.length() == 0) sb.append(-1);
+		
+		if (results.length == 0) {
+			sb.append(-1);
+		}
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -3,10 +3,11 @@ import java.io.*;
 public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
+	boolean[] visited = new boolean[26];
 	char[][] arr;
 	int h, w, maxCount;
 	
-	public int init() throws IOException {
+	public void init() throws IOException {
 		String[] inpuStrs = br.readLine().split(" ");
 		h = Integer.parseInt(inpuStrs[0]);
 		w = Integer.parseInt(inpuStrs[1]);
@@ -15,25 +16,23 @@ public class Main {
 		for (int i = 0; i < h; i++) {
 			arr[i] = br.readLine().toCharArray();
 		}
-		search(0, 0, 1, new boolean[26]);
-		return maxCount;
+		search(0, 0, 1);
 	}
 	
-	public void search(int y, int x, int count, boolean[] isGone) {
-		boolean[] copyIsGone = isGone.clone();
+	public void search(int y, int x, int count) {
+		visited[arr[y][x]-'A'] = true;
 		
-		copyIsGone[arr[y][x]-'A'] = true;
-		
-		boolean canGo = false;
+		boolean isEnd = true;
 		for (int[] del : dels) {
 			int ny = y + del[0];
 			int nx = x + del[1];
-			if (isIn(ny, nx) && !copyIsGone[arr[ny][nx]-'A']) {
-				canGo = true;
-				search(ny, nx, count+1, copyIsGone);
+			if (isIn(ny, nx) && !visited[arr[ny][nx]-'A']) {
+				isEnd = false;
+				search(ny, nx, count+1);
 			}
 		}
-		if (!canGo) {
+		visited[arr[y][x]-'A'] = false;
+		if (isEnd) {
 			maxCount = Math.max(maxCount, count);
 		}
 	}
@@ -43,6 +42,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(new Main().init());
+		Main m = new Main();
+		m.init();
+		System.out.println(m.maxCount);
 	}
 }

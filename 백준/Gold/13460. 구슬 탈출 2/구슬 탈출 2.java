@@ -2,39 +2,46 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	int[][] dels = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };	// 상 하 좌 우
-	Map<String, Integer> map = new HashMap<>();
-	int min = 11;
+	Deque<int[][]> coorQue = new ArrayDeque<>();	// 현재 레벨의 coor 저장
+	Deque<char[][]> boardQue = new ArrayDeque<>();	// 현재 레벨의 board 저장
+	List<int[][]> coorList = new ArrayList<>();		// 누적 coor 저장
 
-	public void f(char[][] board, int[][] coors, int count) {
-		for (int[] del : dels) {
-			if (count > 10) continue;	// 최대 10회 까지만 체크
-			if (count >= this.min) continue;	// count가 이미 최소값보다 크면 검사 종료
-			
-			int[][] newCoors = arrCopy(coors);	// 배열은 참조가 전달되기 때문에 수정 시 원본 배열이 변경됨
-			char[][] newBoard = arrCopy(board);	// 원본 수정을 막기 위해 복사해서 사용
-			
-			int r_b = priorityRB(del, newCoors);	// 먼저 굴러갈 구슬 체크
-			boolean[] isGoal = {	// R,B 각각 골인('O'에 도착) 여부 체크
-				rolling(newBoard, newCoors, del, r_b),
-				rolling(newBoard, newCoors, del, r_b^1)
-			};
-			
-			if (isGoal[r_b^1]) {	// B가 골인하면 검사 종료
-				continue;
-			} else if (isGoal[r_b]) {	// A가 골인
-				min = Math.min(min, count + 1);
-				continue;
+	public boolean bfs() {
+		int size = coorQue.size();
+		while (size-- > 0) {
+			char[][] board = boardQue.pollFirst();
+			int[][] coor = coorQue.pollFirst();
+			F: for (int[] del : dels) {
+				char[][] newBoard = arrCopy(board);
+				int[][] newCoors = arrCopy(coor);
+				
+				int r_b = priorityRB(del, newCoors);	// 먼저 굴러갈 구슬 체크
+				boolean[] isGoal = {	// R,B 각각 골인('O'에 도착) 여부 체크
+						rolling(newBoard, newCoors, del, r_b),
+						rolling(newBoard, newCoors, del, r_b^1)
+				};
+				
+				if (isGoal[r_b^1]) {	// B가 골인하면 제외
+					continue;
+				} else if (isGoal[r_b]) {	// A가 골인하면 끝
+					return false;
+				}
+				
+				for (int[][] coors : coorList) {
+					if (Arrays.deepEquals(coors, newCoors)) {
+						continue F;
+					}
+				}
+				
+				boardQue.addLast(newBoard);
+				coorQue.addLast(newCoors);
+				coorList.add(newCoors);
 			}
-			
-			// 이미 이동했던 좌표에 같거나 큰 횟수로 도착한 경우 검사 종료
-			String coorsToStr = newCoors[0][0]+" "+newCoors[0][1]+" "+newCoors[1][0]+" "+newCoors[1][1];
-			if (map.containsKey(coorsToStr) && map.get(coorsToStr) <= count) {
-				continue;
-			} else map.put(coorsToStr, count);
-			
-			f(newBoard, newCoors, count+1);
 		}
+		
+		return true;
 	}
 	
 	// 구슬 굴리기, 골인 여부를 반환
@@ -79,10 +86,7 @@ public class Main {
 		return newArr;
 	}
 	
-	public static void main(String[] args) throws IOException {
-		Main m = new Main();
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+	public int init() throws IOException {
 		String[] inStrs = br.readLine().split(" ");
 		int N = Integer.parseInt(inStrs[0]);
 		int M = Integer.parseInt(inStrs[1]);
@@ -101,11 +105,25 @@ public class Main {
 				}
 			}
 		}
-		String coorsToStr = coors[0][0]+" "+coors[0][1]+" "+coors[1][0]+" "+coors[1][1];
-		m.map.put(coorsToStr, 0);
-
-		m.f(board, coors, 0);
-		System.out.println(m.min > 10 ? -1 : m.min);
+		coorQue.add(coors);
+		boardQue.add(board);
+		int count = 1;
+		
+		while (bfs()) {
+			count++;
+			if (count > 10) {
+				count = -1;
+				break;
+			}
+		}
+		
+		return count;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		Main m = new Main();
+		int min = m.init();
+		System.out.println(min);
 	}
 
 }

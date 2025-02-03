@@ -6,15 +6,14 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		String str = br.readLine();
-		Set<String> set = new TreeSet<>();
+		List<String> list = new ArrayList<>();
 		
 		for (int i = 1; i <= str.length(); i++) {
 			for (int j = 0; j < str.length()-i+1; j++) {
-				set.add(str.substring(j, j+i));
+				list.add(str.substring(j, j+i));
 			}
 		}
 		
-		System.out.println(set.size());
-		
+		System.out.println(list.stream().distinct().count());
 	}
 }

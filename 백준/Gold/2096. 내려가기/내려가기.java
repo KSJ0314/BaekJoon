@@ -4,39 +4,40 @@ import java.util.Map;
 
 public class Main {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    Map<Integer, Long> map = new HashMap<>();
     int[] dels = {-1,0,1};
     int[][] nums;
-    Map<Integer, int[]> map = new HashMap<>();
+    final long MAX_N = 1_000_000;
     
     public boolean isIn(int x) {
         return x >= 0 && x < 3;
     }
     
-    public int[] counting(int y, int x) {
+    public long counting(int y, int x) {
     	if (map.containsKey(y*10+x)) {
     		return map.get(y*10+x);
     	}
 
     	int num = y >= 0 ? nums[y][x] : 0;
-    	int max = 0;
-    	int min = Integer.MAX_VALUE;
+    	long max = 0;
+    	long min = Integer.MAX_VALUE;
         for (int del : dels) {
             int nx = x + del;
             if (!isIn(nx)) {
             	continue;
             }
 
-            int[] nextNum = counting(y+1, nx);
+            long nextNum = counting(y+1, nx);
             
-            max = Math.max(max, nextNum[0]);
-            min = Math.min(min, nextNum[1]);
+            max = Math.max(max, nextNum / MAX_N);
+            min = Math.min(min, nextNum % MAX_N);
         }
-        map.put(y*10+x, new int[] {max+num,min+num});
+        map.put(y*10+x, (max+num)*MAX_N + (min+num));
         
-        return new int[] {max+num,min+num};
+        return (max+num)*MAX_N + (min+num);
     }
 
-    public int[] init() throws IOException {
+    public long init() throws IOException {
         int n = Integer.parseInt(br.readLine());
         nums = new int[n][3];
 
@@ -46,17 +47,17 @@ public class Main {
             nums[i][1] = Integer.parseInt(strs[1]);
             nums[i][2] = Integer.parseInt(strs[2]);
         }
-        map.put((n-1)*10+0, new int[]{nums[n-1][0],nums[n-1][0]});
-        map.put((n-1)*10+1, new int[]{nums[n-1][1],nums[n-1][1]});
-        map.put((n-1)*10+2, new int[]{nums[n-1][2],nums[n-1][2]});
+        map.put((n-1)*10+0, nums[n-1][0]*MAX_N + nums[n-1][0]);
+        map.put((n-1)*10+1, nums[n-1][1]*MAX_N + nums[n-1][1]);
+        map.put((n-1)*10+2, nums[n-1][2]*MAX_N + nums[n-1][2]);
         
         return counting(-1, 1);
     }
 
     public static void main(String[] args) throws IOException {
         Main m = new Main();
-        int[] result = m.init();
+        long result = m.init();
         
-        System.out.println(result[0] + " " + result[1]);
+        System.out.println((result / m.MAX_N) + " " + (result % m.MAX_N));
     }
 }

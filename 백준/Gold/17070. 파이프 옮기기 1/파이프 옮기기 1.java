@@ -1,5 +1,7 @@
 import java.io.*;
 
+// DP 적용하면 더 빨라질 것
+
 public class Main {
 	public static void main(String[] args) throws IOException {
         Main m = new Main();
@@ -35,7 +37,6 @@ public class Main {
 	
 	public void dfs(Pipe pipe) {
 		int state = pipe.state;
-		
 		for (int i = 0; i < dels.length; i++) {
 			int[] del = dels[state][i];
 			if (del == null) continue;
@@ -52,9 +53,13 @@ public class Main {
 			int l = arr.length-1;
 			if (ny == l && nx == l) {
 				count++;
+				// System.out.println("CountUp");
 				continue;
 			}
 			
+			// System.out.println("pipe: "+pipe.y + ", "+pipe.x+", ");
+			// System.out.println("nyx: "+ny+", "+nx+" continue");
+			// System.out.println("---------");
 			dfs(new Pipe(ny, nx, i));
 		}
 	}

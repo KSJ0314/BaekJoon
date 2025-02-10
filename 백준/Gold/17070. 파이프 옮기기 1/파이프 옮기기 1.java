@@ -1,7 +1,5 @@
 import java.io.*;
 
-// DP 적용하면 더 빨라질 것
-
 public class Main {
 	public static void main(String[] args) throws IOException {
         Main m = new Main();
@@ -12,6 +10,7 @@ public class Main {
 	// ↓↓↓↓↓↓↓↓ 구현 부 ↓↓↓↓↓↓↓↓
 	
 	boolean[][] arr;		// 입력 배열
+	boolean[][][] visited;	// 끝까지 간 pipe의 경우 해당경로는 더 이상 검사하지 않아도 됨.
 	int count = 0;			// 파이프를 끝까지 가져갈 수 있는 방법의 수
 	int[][][] dels = {	// 파이프가 움직일 수 있는 방법
 		{	// 가로 파이프의 이동 방법
@@ -28,6 +27,7 @@ public class Main {
 			{1,1}	// 대각 이동
 		}
 	};
+	int cnt = 0;
 	
 	public void init() {
 		input();
@@ -36,6 +36,7 @@ public class Main {
 	}
 	
 	public void dfs(Pipe pipe) {
+		cnt++;
 		int state = pipe.state;
 		for (int i = 0; i < dels.length; i++) {
 			int[] del = dels[state][i];
@@ -49,17 +50,19 @@ public class Main {
 			if (i == 2) {
 				if (arr[ny][nx-1] || arr[ny-1][nx]) continue;
 			}
+//			if (i == 2 && (visited[ny][nx][0] || visited[ny][nx][1] || visited[ny][nx][2])
+//					|| visited[ny][nx][i]) {
+//				count++;
+//				continue;
+//			}
 			
-			int l = arr.length-1;
-			if (ny == l && nx == l) {
+			int leng = arr.length-1;
+			if (ny == leng && nx == leng) {
 				count++;
-				// System.out.println("CountUp");
+				//visitedSave(pipe.visited);
 				continue;
 			}
 			
-			// System.out.println("pipe: "+pipe.y + ", "+pipe.x+", ");
-			// System.out.println("nyx: "+ny+", "+nx+" continue");
-			// System.out.println("---------");
 			dfs(new Pipe(ny, nx, i));
 		}
 	}
@@ -68,11 +71,26 @@ public class Main {
 		int y;		// 파이프 뒤y
 		int x;		// 파이프 뒤x
 		int state;	// 파이프 상태: 0=가로 | 1=세로 | 2=대각
+		//boolean[][][] visited = new boolean[arr.length][arr.length][3];	// 파이프의 이동 경로 저장: (y, x, state)
 		
 		public Pipe(int y, int x, int state) {
 			this.y = y;
 			this.x = x;
 			this.state = state;
+			//this.visited[y][x][state] = true;
+		}
+	}
+	
+	// 끝까지 간 경로의 경우 값을 저장
+	public void visitedSave(boolean[][][] visited) {
+		for (int i = 0; i < visited.length; i++) {
+			for (int j = 0; j < visited[i].length; j++) {
+				for (int j2 = 0; j2 < visited[i][j].length; j2++) {
+					if (visited[i][j][j2]) {
+						this.visited[i][j][j2] = true;
+					}
+				}
+			}
 		}
 	}
     
@@ -87,6 +105,7 @@ public class Main {
 			String[] strs;
 			int n = Integer.parseInt(br.readLine());
 			arr = new boolean[n][n];
+			visited = new boolean[n][n][3];
 			
 			for (int i = 0; i < n; i++) {
 				strs = br.readLine().split(" ");

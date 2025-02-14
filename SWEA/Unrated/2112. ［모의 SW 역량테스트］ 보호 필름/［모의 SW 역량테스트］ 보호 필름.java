@@ -42,6 +42,7 @@ public class Solution {
 			return check();
 		}
 		if (depth == D) return false;
+		if (D-depth+cnt < size) return false;
 		
 		// 미리 배열 복사
 		int[] temp = arr[depth].clone();

@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Solution {
-	static int D,W,K,min;
+	static int D,W,K,min, size;
 	static int[][] arr;
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -26,7 +26,11 @@ public class Solution {
 			
 			// 부분 집합의 size를 설정해서 작은 크기의 부분 집합부터 구한다.
 			for (int i = 0; i <= K; i++) {
-				if (subset(0,0,i)) break;
+				size = i;
+				if (combi(0, 0)) {
+					min = i;
+					break;
+				}
 			}
 			
 			sb.append("#"+test_case+" "+min+"\n");
@@ -36,28 +40,23 @@ public class Solution {
 	}
 	
 	// boolean으로 return해서 check()가 true일 때 연달아서 다 종료됨
-	public static boolean subset(int depth, int cnt, int size) {
-		if (cnt == size) {
-			min = size;
-			return check();
+	public static boolean combi(int depth, int start) {
+		if (depth == size) return check();
+		
+		for (int i = start; i < D; i++) {
+			// 미리 배열 복사
+			int[] temp = arr[i].clone();
+			
+			// A로 가득 채워서 진행
+			Arrays.fill(arr[i], 0);
+			if (combi(depth+1, i+1)) return true;
+			
+			// B로 가득 채워서 진행
+			Arrays.fill(arr[i], 1);
+			if (combi(depth+1, i+1)) return true;
+			
+			arr[i] = temp;
 		}
-		if (depth == D) return false;
-		if (D-depth+cnt < size) return false;
-		
-		// 미리 배열 복사
-		int[] temp = arr[depth].clone();
-		
-		// A로 가득 채워서 진행
-		Arrays.fill(arr[depth], 0);
-		if (subset(depth+1, cnt+1, size)) return true;
-		
-		// B로 가득 채워서 진행
-		Arrays.fill(arr[depth], 1);
-		if (subset(depth+1, cnt+1, size)) return true;
-		
-		// 아무것도 하지 않고 진행 (복사한 값 다시 채워줌으로써 원본 배열을 복구)
-		arr[depth] = temp;
-		if (subset(depth+1, cnt, size)) return true;
 		
 		return false;
 	}

@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.*;
 
 public class Main {
 	static int N,M,R,l;
@@ -38,12 +37,14 @@ public class Main {
 	}
 
 	static void print() {
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
-				System.out.print(arr[i][j]+" ");
+				sb.append(arr[i][j]+" ");
 			}
-			System.out.println();
+			sb.append("\n");
 		}
+		System.out.println(sb);
 	}
 	
 	static void init(BufferedReader br) throws IOException {

@@ -4,7 +4,6 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		// int N = Integer.parseInt(br.readLine());
 		int[] numArr = new int[20000001];
 		
 		br.readLine();

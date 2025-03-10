@@ -2,7 +2,5 @@
 select ID,	EMAIL,	FIRST_NAME,	LAST_NAME
 from DEVELOPER_INFOS
 where
-    SKILL_1 = 'Python'
-    || SKILL_2 = 'Python'
-    || SKILL_3 = 'Python'
+    'Python' in (SKILL_1,SKILL_2 , SKILL_3)  
 order by ID;

@@ -9,40 +9,23 @@ public class Main {
     public static void main(String[] args) throws IOException {
         init();
         
-        int num1 = inputDeque.pollFirst();
-        int num2 = inputDeque.pollLast();
-        int r1 = num1, r2 = num2;
-        int minDiff = Math.abs(num1+num2);
-        boolean isFirst = true;
-        
-        if (Math.abs(num1) > Math.abs(num2)) {
-        	cycleDeque.offerLast(num2);
-    	} else {
-    		cycleDeque.offerLast(num1);
-    		isFirst = false;
-    	}
+        int[] result = new int[2];
+        int minDiff = Integer.MAX_VALUE;
+        boolean isFirst = false;
         
         while (!inputDeque.isEmpty()) {
-        	if (isFirst) {
-        		cycleDeque.offerLast(inputDeque.pollFirst());
-        	} else {
-        		cycleDeque.offerLast(inputDeque.pollLast());
-        	}
-        	num1 = cycleDeque.peekFirst();
-        	num2 = cycleDeque.peekLast();
-        	if (minDiff > Math.abs(num1+num2)) {
-        		minDiff = Math.abs(num1+num2);
-        		if (num1 < num2) {
-        			r1 = num1;
-        			r2 = num2;
-        		} else {
-        			r1 = num2;
-        			r2 = num1;
-        		}
-        	}
+        	int nextNum = isFirst ? inputDeque.pollFirst() : inputDeque.pollLast();
+        	cycleDeque.offerLast(nextNum);
         	
-//        	System.out.println(minDiff);
-//        	System.out.println(num1+" "+num2);
+        	int num1 = cycleDeque.peekFirst();
+        	int num2 = cycleDeque.peekLast();
+        	int diff = Math.abs(num1+num2);
+        	
+        	if (minDiff > diff) {
+        		minDiff = diff;
+        		result[0] = num1;
+        		result[1] = num2;
+        	}
         	
         	if (Math.abs(num1) > Math.abs(num2)) {
         		cycleDeque.pollFirst();
@@ -54,7 +37,8 @@ public class Main {
         	if (minDiff == 0) break;
         }
         
-        System.out.println(r1 + " " + r2);
+        Arrays.sort(result);
+        System.out.println(result[0] + " " + result[1]);
     }
 
 	static void init() throws IOException {
@@ -65,10 +49,11 @@ public class Main {
         cycleDeque = new ArrayDeque<>();
         
         String[] strs = br.readLine().split(" ");
-        for (int i = 0; i < N; i++) {
+        for (int i = 1; i < N; i++) {
         	int num = Integer.parseInt(strs[i]);
         	inputDeque.offerLast(num);
 		}
+        cycleDeque.offerLast(Integer.parseInt(strs[0]));
 		
 	}
     

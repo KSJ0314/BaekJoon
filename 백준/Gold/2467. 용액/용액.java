@@ -3,57 +3,53 @@ import java.util.*;
 
 public class Main {
 	static int N;
-	static Deque<Integer> inputDeque;
-	static Deque<Integer> cycleDeque;
+	static int[] arr, result;
     
     public static void main(String[] args) throws IOException {
         init();
-        
-        int[] result = new int[2];
-        int minDiff = Integer.MAX_VALUE;
-        boolean isFirst = false;
-        
-        while (!inputDeque.isEmpty()) {
-        	int nextNum = isFirst ? inputDeque.pollFirst() : inputDeque.pollLast();
-        	cycleDeque.offerLast(nextNum);
-        	
-        	int num1 = cycleDeque.peekFirst();
-        	int num2 = cycleDeque.peekLast();
-        	int diff = Math.abs(num1+num2);
-        	
-        	if (minDiff > diff) {
-        		minDiff = diff;
-        		result[0] = num1;
-        		result[1] = num2;
-        	}
-        	
-        	if (Math.abs(num1) > Math.abs(num2)) {
-        		cycleDeque.pollFirst();
-        	} else {
-        		cycleDeque.pollLast();
-        	}
-        	isFirst = cycleDeque.peek() > 0;
-        	
-        	if (minDiff == 0) break;
-        }
-        
+        movePointer();
         Arrays.sort(result);
         System.out.println(result[0] + " " + result[1]);
     }
+
+	private static void movePointer() {
+		int minDiff = Integer.MAX_VALUE;
+        int pL = 0;
+        int pR = N-1;
+        
+        while (pL < pR) {
+        	int n1 = arr[pL];
+        	int n2 = arr[pR];
+        	int diff = Math.abs(n1+n2);
+        	
+        	if (minDiff > diff) {
+        		minDiff = diff;
+        		result[0] = n1;
+        		result[1] = n2;
+        	}
+        	
+        	if (Math.abs(n1) > Math.abs(n2)) {
+        		pL++;
+        	} else {
+        		pR--;
+        	}
+        	
+        	if (minDiff == 0) break;
+        }
+		
+	}
 
 	static void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         N = Integer.parseInt(br.readLine());
-        inputDeque = new ArrayDeque<>(N);
-        cycleDeque = new ArrayDeque<>();
+        arr = new int[N];
+        result = new int[2];
         
         String[] strs = br.readLine().split(" ");
-        for (int i = 1; i < N; i++) {
-        	int num = Integer.parseInt(strs[i]);
-        	inputDeque.offerLast(num);
+        for (int i = 0; i < N; i++) {
+        	arr[i] = Integer.parseInt(strs[i]);
 		}
-        cycleDeque.offerLast(Integer.parseInt(strs[0]));
 		
 	}
     

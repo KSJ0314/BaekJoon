@@ -1,34 +1,29 @@
 import java.io.*;
-import java.util.*;
 
 public class Main {
-	static int N;
-	static int[] arr, result;
+	static int N, left, right;
+	static int[] arr;
     
     public static void main(String[] args) throws IOException {
         init();
         movePointer();
-        Arrays.sort(result);
-        System.out.println(result[0] + " " + result[1]);
+        System.out.println(arr[left] + " " + arr[right]);
     }
 
 	private static void movePointer() {
 		int minDiff = Integer.MAX_VALUE;
-        int pL = 0;
-        int pR = N-1;
+        int pL = 0, pR = N-1;
         
         while (pL < pR) {
-        	int n1 = arr[pL];
-        	int n2 = arr[pR];
-        	int diff = Math.abs(n1+n2);
+        	int diff = arr[pL]+arr[pR];
         	
-        	if (minDiff > diff) {
-        		minDiff = diff;
-        		result[0] = n1;
-        		result[1] = n2;
+        	if (minDiff > Math.abs(diff)) {
+        		minDiff = Math.abs(diff);
+        		left = pL;
+        		right = pR;
         	}
         	
-        	if (Math.abs(n1) > Math.abs(n2)) {
+        	if (diff < 0) {
         		pL++;
         	} else {
         		pR--;
@@ -44,7 +39,6 @@ public class Main {
         
         N = Integer.parseInt(br.readLine());
         arr = new int[N];
-        result = new int[2];
         
         String[] strs = br.readLine().split(" ");
         for (int i = 0; i < N; i++) {

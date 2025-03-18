@@ -1,45 +1,49 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int M, N;
-	static List<int[]> lst;
-	static int[] degree;
+
+	static int N;
+	static int[] result;
+	static int[][] arr;
 
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		String[] s = br.readLine().split(" ");
-		M = Integer.parseInt(s[0]);
-		N = Integer.parseInt(s[1]);
-
-		lst = new ArrayList<>();
-
-		degree = new int[M + 1];
-
-		for (int i = 0; i < N; i++) {
-			s = br.readLine().split(" ");
-			int a = Integer.parseInt(s[0]);
-			int b = Integer.parseInt(s[1]);
-			lst.add(new int[] { a, b });
+		init();
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 1; i <= N; i++) {
+			sb.append(dp(i)).append(" ");
 		}
-
-		lst.sort(Comparator.comparingInt(a -> a[0]));
-
-		for (int i = 0; i < N; i++) {
-			int[] arr = lst.get(i);
-			int ans = Math.max(degree[arr[1]], degree[arr[0]] + 1);
-			degree[arr[1]] = ans;
-
-		}
-		for (int i = 1; i <= M; i++) {
-			System.out.print((degree[i] + 1) + " ");
-		}
+		System.out.println(sb);
 	}
 
+	static int dp(int i) {
+		if (result[i] != 0) return result[i];
+		int max = 0;
+		for (int j = 1; j <= N; j++) {
+			if (arr[i][j] == 0) continue;
+			max = Math.max(max, dp(j));
+		}
+		
+		return result[i] = max+1;
+	}
+
+	static void init() throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String[] strs = br.readLine().split(" ");
+		N = Integer.parseInt(strs[0]);
+		int M = Integer.parseInt(strs[1]);
+		
+		arr = new int[N+1][N+1];
+		result = new int[N+1];
+		
+		boolean[] v = new boolean[N+1];
+		for (int i = 0; i < M; i++) {
+			strs = br.readLine().split(" ");
+			int a = Integer.parseInt(strs[0]);
+			int b = Integer.parseInt(strs[1]);
+			v[b] = true;
+			arr[b][a] = 1;
+		}
+	}
 }

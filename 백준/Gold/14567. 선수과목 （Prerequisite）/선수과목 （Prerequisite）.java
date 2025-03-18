@@ -37,12 +37,10 @@ public class Main {
 		arr = new int[N+1][N+1];
 		result = new int[N+1];
 		
-		boolean[] v = new boolean[N+1];
 		for (int i = 0; i < M; i++) {
 			strs = br.readLine().split(" ");
 			int a = Integer.parseInt(strs[0]);
 			int b = Integer.parseInt(strs[1]);
-			v[b] = true;
 			arr[b][a] = 1;
 		}
 	}

@@ -1,11 +1,18 @@
 import java.io.*;
-import java.util.*;
 
 public class Main {
+	static class Node{
+		int to;
+		Node next;
+		public Node(int to, Main.Node next) {
+			this.to = to;
+			this.next = next;
+		}
+	}
 
 	static int N, target;
 	static int[] times, result;
-	static HashSet<Integer>[] outList, inList;
+	static Node[] outList, inList;
 	static boolean[][] visited;
 
 	public static void main(String[] args) throws IOException {
@@ -22,20 +29,16 @@ public class Main {
 	}
 
 	static void dp(int i) {
-		if (inList[i] != null) {
-			for (int n : inList[i]) {
-				if (visited[i][n]) continue;
-				dp(n);
-			}
+		for (Node node = inList[i]; node != null; node = node.next) {
+			if (visited[i][node.to]) continue;
+			dp(node.to);
 		}
 		
 		result[i] += times[i];
-		
-		if (outList[i] != null) {
-			for (int n : outList[i]) {
-				visited[n][i] = true;
-				result[n] = Math.max(result[n], result[i]);
-			}
+	
+		for (Node node = outList[i]; node != null; node = node.next) {
+			visited[node.to][i] = true;
+			result[node.to] = Math.max(result[node.to], result[i]);
 		}
 	}
 
@@ -45,8 +48,8 @@ public class Main {
 		N = Integer.parseInt(strs[0]);
 		int K = Integer.parseInt(strs[1]);
 		times = new int[N+1];
-		inList = new HashSet[N+1];
-		outList = new HashSet[N+1];
+		inList = new Node[N+1];
+		outList = new Node[N+1];
 		result = new int[N+1];
 		visited = new boolean[N+1][N+1];
 		
@@ -66,8 +69,8 @@ public class Main {
 		target = Integer.parseInt(br.readLine());
 	}
 
-	static void listAdd(HashSet<Integer>[] list, int a, int b) {
-		if (list[a] == null) list[a] = new HashSet<>();
-		list[a].add(b);
+	static void listAdd(Node[] list, int a, int b) {
+		Node node = new Node(b, list[a]);
+		list[a] = node;
 	}
 }

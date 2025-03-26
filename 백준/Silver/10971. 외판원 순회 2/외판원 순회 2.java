@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +11,11 @@ public class Main {
 	static int[] path;
 
 	static void func(int depth, int from, int cost, int originalFrom) {
+		
+		if(cost >= ans) {
+			return;
+		}
+		
 		
 		if (depth == N) {
 			if(arr[from][originalFrom] != 0) {

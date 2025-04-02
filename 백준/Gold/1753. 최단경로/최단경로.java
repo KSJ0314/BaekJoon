@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-	static class Node{
+	static class Node{	// 인접 리스트 관리
 		int to, weight;
 		Node next;
 		
@@ -12,11 +12,28 @@ public class Main {
 			this.next = next;
 		}
 	}
+	
+	static class Vertex implements Comparable<Vertex>{	// PQ에 넣을 클래스
+
+		int no, minDis;	// 정점 번호, 출발지에서 정점까지의 비용
+		
+		public Vertex(int no, int minDis) {
+			this.no = no;
+			this.minDis = minDis;
+		}
+
+		@Override
+		public int compareTo(Vertex o) {
+			return Integer.compare(this.minDis, o.minDis);
+		}
+	}
+	
 	static final int INF = Integer.MAX_VALUE;
 	static int V,E,K;
 	static Node[] nodes;
 	static int[] minDis;
 	static boolean[] visited;
+	static PriorityQueue<Vertex> pQ;
 
 	public static void main(String[] args) throws IOException {
 		init();
@@ -29,23 +46,18 @@ public class Main {
 	}
 
 	static void dij() {
-		for (int i = 1; i <= V; i++) {
-			int stopOver = -1;
-			int min = INF;
-			for (int j = 1; j <= V; j++) {
-				if (visited[j]) continue;
-				if (min <= minDis[j]) continue;
-				stopOver = j;
-				min = minDis[j];
-			}
+		while (!pQ.isEmpty()){
+			Vertex stopOver = pQ.poll();
+			if (visited[stopOver.no]) continue;
 			
+			// if (stopOver.no == end) break;
+			visited[stopOver.no] = true;
 			
-			if (stopOver == -1) break;
-			
-			visited[stopOver] = true;
-			for (Node node = nodes[stopOver]; node != null; node = node.next) {
+			for (Node node = nodes[stopOver.no]; node != null; node = node.next) {
 				if (visited[node.to]) continue;
-				minDis[node.to] = Math.min(minDis[node.to], min+node.weight);
+				if (minDis[node.to] <= stopOver.minDis+node.weight) continue;
+				minDis[node.to] = stopOver.minDis+node.weight;
+				pQ.offer(new Vertex(node.to, minDis[node.to]));
 			}
 		}
 	}
@@ -73,5 +85,8 @@ public class Main {
 		
 		Arrays.fill(minDis, INF);
 		minDis[K] = 0;
+		
+		pQ = new PriorityQueue<>();
+		pQ.offer(new Vertex(K, minDis[K]));
 	}
 }

@@ -30,7 +30,6 @@ public class Main {
 	static Coor[] coors;
 	static double[] minDis;
 	static PriorityQueue<Vertex> pQ;
-	static HashSet<Integer> idxSet;
 
 	public static void main(String[] args) throws IOException {
 		init();
@@ -43,9 +42,8 @@ public class Main {
 			Vertex vertex = pQ.poll();
 			if (vertex.no == 1) break;
 			if (vertex.dis > minDis[vertex.no]) continue;
-			idxSet.remove(vertex.no);
 			
-			for (int i : idxSet) {
+			for (int i = 1; i < n+2; i++) {
 				double dis = vertex.dis + 10 + Math.abs(50-calDis(vertex.no, i));
 				if (minDis[i] <= dis) continue;
 				minDis[i] = dis;
@@ -92,13 +90,11 @@ public class Main {
 		minDis[1] = calDis(0,1);
 		
 		pQ = new PriorityQueue<>();
-		idxSet = new HashSet<>();
 		
 		for (int i = 1; i < n+2; i++) {
 			double dis = calDis(0, i);
 			minDis[i] = dis;
 			pQ.offer(new Vertex(i, dis));
-			idxSet.add(i);
 		}
 	}
 }

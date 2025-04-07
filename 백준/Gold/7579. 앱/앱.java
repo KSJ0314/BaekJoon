@@ -1,23 +1,31 @@
 import java.io.*;
-import java.util.*;
 
+// N개의 앱 중 c의 합이 최소가 되도록 선택
+//  => N개의 앱 중에 제외할 앱을 선택, c의 합이 최대가 되도록
 public class Main {
-	static int N, M;
-	static int[][] apps;	// [n]개의 app에 대한 [m, c]
-	static int[] dp, sum;
+	static int N, M, C;
+	static int[][] apps;
+	static int[] dp;
 
 	public static void main(String[] args) throws IOException {
 		init();
 		dp();
-		System.out.println(sum[1] - dp[M]);
+		System.out.println(min());
 	}
 
 	static void dp() {
 		for (int[] app : apps) {
-			for (int i = M; i >= app[0]; i--) {
-				dp[i] = Math.max(dp[i], dp[i-app[0]]+app[1]);
+			for (int i = C; i >= app[1]; i--) {
+				dp[i] = Math.max(dp[i], dp[i-app[1]]+app[0]);
 			}
 		}
+	}
+
+	static int min() {
+		for (int i = 0; i < C; i++) {
+			if (dp[i] >= M) return i;
+		}
+		return C;
 	}
 
 	static void init() throws IOException {
@@ -26,17 +34,18 @@ public class Main {
 		N = Integer.parseInt(strs[0]);
 		M = Integer.parseInt(strs[1]);
 		apps = new int[N][2];
-		sum = new int[2];
+		C = 0;
 		
 		for (int j = 0; j < 2; j++) {
 			strs = br.readLine().split(" ");
 			for (int i = 0; i < N; i++) {
-				apps[i][j] = Integer.parseInt(strs[i]);
-				sum[j] += apps[i][j];
+				int num = Integer.parseInt(strs[i]);
+				apps[i][j] = num;
+				
+				if (j == 1) C += num;
 			}
 		}
 		
-		M = sum[0]-M;
-		dp = new int[M+1];
+		dp = new int[C+1];
 	}
 }

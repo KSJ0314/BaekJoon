@@ -2,22 +2,37 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	static class Thing{		// 가독성을 위해 물건을 class로 저장
+		int weight, value;
+		public Thing(int weight, int value) {
+			this.weight = weight;
+			this.value = value;
+		}
+	}
+	
+	static Thing[] things;
 	static int N, K;
-	static int[][] things, dp; 
+	static int[] dp;	// 공간 복잡도 압축을 위해 1차원 배열로 생성
 
 	public static void main(String[] args) throws IOException {
 		init();
 		
+		makeDp();
+		
+		System.out.println(dp[K]);
+	}
+	
+	public static void makeDp() {
 		for (int i = 1; i <= N; i++) {
-			for (int j = 1; j <= K; j++) {
-				dp[i][j] = dp[i-1][j];
-				if (j >= things[i][0]) {
-					dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-things[i][0]]+things[i][1]);
-				}
+			int w = things[i].weight;
+			int v = things[i].value;
+			
+			// 중복 저장이 안되므로 뒤에서부터 저장
+			// w 이상만 체크
+			for (int j = K; j >= w; j--) {
+				dp[j] = Math.max(dp[j], dp[j-w] + v);
 			}
 		}
-		
-		System.out.println(dp[N][K]);
 	}
 
 	public static void init() throws IOException {
@@ -26,13 +41,14 @@ public class Main {
 		N = Integer.parseInt(strs[0]);
 		K = Integer.parseInt(strs[1]);
 		
-		things = new int[N+1][2];
-		dp = new int[N+1][K+1];
+		things = new Thing[N+1];
+		dp = new int[K+1];
 		
 		for (int i = 1; i <= N; i++) {
 			strs = br.readLine().split(" ");
-			things[i][0] = Integer.parseInt(strs[0]);
-			things[i][1] = Integer.parseInt(strs[1]);
+			int weight = Integer.parseInt(strs[0]);
+			int value = Integer.parseInt(strs[1]);
+			things[i] = new Thing(weight, value);
 		}
 	}
 	

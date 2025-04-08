@@ -54,14 +54,16 @@ public class Solution {
 	static int pinball(int y, int x, int del) {
 		int ny = y, nx = x, cnt = 0;
 		W: while (true) {
+			int num;
 			do {
 				ny += DELS[del][0];
 				nx += DELS[del][1];
-				if ((ny == y && nx == x) || map[ny][nx] == -1) break W;
-			} while (map[ny][nx] == 0);
+				num = map[ny][nx];
+				if ((ny == y && nx == x) || num == -1) break W;
+			} while (num == 0);
 			
-			if (1 <= map[ny][nx] && map[ny][nx] <= 5) {
-				del = DIR[map[ny][nx]][del];
+			if (1 <= num && num <= 5) {
+				del = DIR[num][del];
 				cnt++;
 			} else {
 				int key = ny*100 + nx;

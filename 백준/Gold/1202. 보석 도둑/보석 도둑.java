@@ -14,24 +14,18 @@ public class Main {
 		public int compareTo(Jewel o) {
 			return Integer.compare(this.v, o.v) * -1;
 		}
-
-		@Override
-		public String toString() {
-			return "Jewel [m=" + m + ", v=" + v + "]";
-		}
-		
 	}
 	
-	static class Back implements Comparable<Back>{
+	static class Bag implements Comparable<Bag>{
 		int no, c;
 
-		public Back(int no, int c) {
+		public Bag(int no, int c) {
 			this.no = no;
 			this.c = c;
 		}
 
 		@Override
-		public int compareTo(Back o) {
+		public int compareTo(Bag o) {
 			if (this.c != o.c) {
 				return Integer.compare(this.c, o.c);
 			} else {
@@ -40,12 +34,12 @@ public class Main {
 		}
 	}
 	
-	static <T> T pollCeiling(TreeSet<T> set, T e) {
+	static <T> boolean pollCeiling(TreeSet<T> set, T e) {
 		T target = set.ceiling(e);
 		
-		if (target == null) return null;
+		if (target == null) return false;
 		set.remove(target);
-		return target;
+		return true;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -53,7 +47,7 @@ public class Main {
 		String[] strs;
 		
 		PriorityQueue<Jewel> jewelPQ = new PriorityQueue<>();
-		TreeSet<Back> BackSet = new TreeSet<>();
+		TreeSet<Bag> bagSet = new TreeSet<>();
 		
 		strs = br.readLine().split(" ");
 		int N = Integer.parseInt(strs[0]);
@@ -68,14 +62,13 @@ public class Main {
 		
 		for (int i = 0; i < K; i++) {
 			int c = Integer.parseInt(br.readLine());
-			BackSet.add(new Back(i, c));
+			bagSet.add(new Bag(i, c));
 		}
 		
 		long sum = 0;
-		while (!jewelPQ.isEmpty()) {
+		while (!jewelPQ.isEmpty() && !bagSet.isEmpty()) {
 			Jewel jewel = jewelPQ.poll();
-			Back back = pollCeiling(BackSet, new Back(-1, jewel.m));
-			if (back != null) {
+			if (pollCeiling(bagSet, new Bag(-1, jewel.m))) {
 				sum += jewel.v;
 			}
 		}

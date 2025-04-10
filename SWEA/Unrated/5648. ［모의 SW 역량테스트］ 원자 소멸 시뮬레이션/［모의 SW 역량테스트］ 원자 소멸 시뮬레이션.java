@@ -12,7 +12,7 @@ public class Solution {
 		}
 	}
 	static int N, total;
-	static Map<Long, Atom> preMap, nextMap;
+	static Map<Integer, Atom> preMap, nextMap;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -35,13 +35,13 @@ public class Solution {
 			preMap = nextMap;
 			nextMap = new HashMap<>();
 			
-			for (long key : preMap.keySet()) {
+			for (int key : preMap.keySet()) {
 				Atom atom = preMap.get(key);
 				if (atom.e) continue;
-				long nx = (key/100000)-10000 + dels[atom.d][1];
-				long ny = (key%100000)-10000 + dels[atom.d][0];
+				int nx = key/10000 + dels[atom.d][1];
+				int ny = key%10000 + dels[atom.d][0];
 				if (!isIn(nx, ny)) continue;
-				long coor = coorMapping(nx, ny);
+				int coor = coorMapping(nx, ny);
 				
 				if (nextMap.containsKey(coor)) {
 					Atom atom2 = nextMap.get(coor);
@@ -55,8 +55,8 @@ public class Solution {
 		}
 	}
 
-	static boolean isIn(long x, long y) {
-		return x >= -2000 && x <= 2000 && y >= -2000 && y <= 2000;
+	static boolean isIn(int x, int y) {
+		return x >= 0 && x <= 4000 && y >= 0 && y <= 4000;
 	}
 
 	static void init(BufferedReader br) throws IOException {
@@ -69,15 +69,15 @@ public class Solution {
 		String[] strs;
 		for (int i = 0; i < N; i++) {
 			strs = br.readLine().split(" ");
-			int x = Integer.parseInt(strs[0])*2;
-			int y = Integer.parseInt(strs[1])*2;
+			int x = (Integer.parseInt(strs[0])+1000)*2;
+			int y = (Integer.parseInt(strs[1])+1000)*2;
 			int d = Integer.parseInt(strs[2]);
 			int k = Integer.parseInt(strs[3]);
 			nextMap.put(coorMapping(x, y), new Atom(d, k));
 		}
 	}
 
-	static long coorMapping(long x, long y) {
-		return (x+10000)*100000 + (y+10000);
+	static int coorMapping(int x, int y) {
+		return x*10000 + y;
 	}
 }

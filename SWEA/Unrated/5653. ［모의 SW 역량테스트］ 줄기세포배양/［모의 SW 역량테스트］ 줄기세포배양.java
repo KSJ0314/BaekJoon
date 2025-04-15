@@ -41,6 +41,8 @@ public class Solution {
 
 	static void fnc() {
 		while (K-- > 0) {
+			addCells.clear();
+			removeCells.clear();
 			for (Cell cell : cells) {
 				cell.time--;
 				if (cell.time == -1) {	// 세포 분열

@@ -21,9 +21,9 @@ public class Solution {
 	static int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
 	static int N, M, K;
 	static Set<Integer> keys;				// 세포가 저장된 좌표 저장 (좌표를 key로 매핑해서 이미 사용중인 key인지 확인)
-	static Set<Cell> cells;					// 전체 순회, 추가, 특정 객체 제거 잦음 : HashSet
+	static Map<Integer, Cell> cells;		// 전체 순회, 추가, 특정 객체 제거 잦음 : HashSet
 	static PriorityQueue<Cell> addCells;	// 정렬해서 하나씩 다 빼기 : PQ
-	static List<Cell> removeCells;			// 추가, 전체 순회만 : ArrayList
+	static List<Integer> removeCells;		// 추가, 전체 순회만 : ArrayList
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -42,20 +42,17 @@ public class Solution {
 		
 		System.out.println(sb);
 	}
-	
-	
 
 	static void fnc() {
 		while (K-- > 0) {
-			removeCells.clear();
 			
-			for (Cell cell : cells) {
+			for (Cell cell : cells.values()) {
 				cell.time--;
 				if (cell.time == -1) {	// 분열할 세포 저장
 					addCells.add(cell);
 				}
 				if (cell.time == cell.life*-1) {	// 사망할 세포 저장 (forEach 돌면서 remove 하면 안됨)
-					removeCells.add(cell);
+					removeCells.add(cell.y*1000 + cell.x);
 				}
 			}
 			
@@ -68,14 +65,15 @@ public class Solution {
 					
 					if (!keys.contains(key)) {	// 분열 성공
 						keys.add(key);
-						cells.add(new Cell(ny, nx, cell.life));
+						cells.put(key, new Cell(ny, nx, cell.life));
 					}
 				}
 			}
 			
-			for (Cell cell : removeCells) {
-				cells.remove(cell);
+			for (int key : removeCells) {
+				cells.remove(key);
 			}
+			removeCells.clear();
 		}
 	}
 
@@ -86,7 +84,7 @@ public class Solution {
 		strs =  br.readLine().split(" ");
 		
 		keys = new HashSet<>();
-		cells = new HashSet<>();
+		cells = new HashMap<>();
 		addCells = new PriorityQueue<>();
 		removeCells = new ArrayList<>();
 		
@@ -99,8 +97,8 @@ public class Solution {
 			for (int j = 0; j < M; j++) {
 				int num = Integer.parseInt(strs[j]);
 				if (num != 0) {
-					cells.add(new Cell(200+i, 200+j, num));
 					int key = (i+200)*1000 + (j+200);
+					cells.put(key, new Cell(200+i, 200+j, num));
 					keys.add(key);
 				}
 			}

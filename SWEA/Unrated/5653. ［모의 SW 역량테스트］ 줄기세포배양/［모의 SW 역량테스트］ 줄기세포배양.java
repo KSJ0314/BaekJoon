@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Solution {
 	
-	static class Cell{
+	static class Cell implements Comparable<Cell>{
 		int y, x, life, time;
 
 		public Cell(int y, int x, int life) {
@@ -12,10 +12,16 @@ public class Solution {
 			this.life = life;
 			this.time = life;
 		}
+
+		@Override
+		public int compareTo(Cell o) {
+			return Integer.compare(o.life, this.life);
+		}
 	}
 	static int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
 	static int N, M, K;
-	static List<Cell> addCells, removeCells;
+	static List<Cell> removeCells;
+	static PriorityQueue<Cell> addCells;
 	static int[][] arr;
 	static Set<Cell> cells;
 	
@@ -41,7 +47,6 @@ public class Solution {
 
 	static void fnc() {
 		while (K-- > 0) {
-			addCells.clear();
 			removeCells.clear();
 			for (Cell cell : cells) {
 				cell.time--;
@@ -53,9 +58,8 @@ public class Solution {
 				}
 			}
 			
-			Collections.sort(addCells, (o1, o2) -> Integer.compare(o2.life, o1.life));
-			
-			for (Cell cell : addCells) {
+			while (!addCells.isEmpty()) {
+				Cell cell = addCells.poll();
 				for (int[] del : dels) {
 					int ny = cell.y + del[0];
 					int nx = cell.x + del[1];
@@ -80,7 +84,7 @@ public class Solution {
 		strs =  br.readLine().split(" ");
 		
 		cells = new HashSet<>();
-		addCells = new ArrayList<>();
+		addCells = new PriorityQueue<>();
 		removeCells = new ArrayList<>();
 		arr = new int[500][500];
 		

@@ -2,9 +2,20 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+	static class Node{
+		int y, x, no;
+		Node next;
+		
+		public Node(int y, int x, int no, Node next) {
+			this.y = y;
+			this.x = x;
+			this.no = no;
+			this.next = next;
+		}
+	}
 	static int N;
 	static int[] p;
-	static List<Long> nodes;
+	static Node nodes;
 	
 	public static void main(String[] args) throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -17,7 +28,7 @@ public class Main {
 			
 			N = Integer.parseInt(br.readLine());
 			p = new int[N+2];
-			nodes = new ArrayList<>();
+			nodes = null;
 			
 			for (int i = 0; i < N+2; i++) {
 				p[i] = i;
@@ -26,22 +37,16 @@ public class Main {
 			for (int i = 0; i < N+2; i++) {
 				strs =  br.readLine().split(" ");
 				
-				int y = Integer.parseInt(strs[0]) + 40_000;
-				int x = Integer.parseInt(strs[1]) + 40_000;
+				int y = Integer.parseInt(strs[0]);
+				int x = Integer.parseInt(strs[1]);
 				
-				for (int j = 0; j < nodes.size(); j++) {
-					long nodeCoor = nodes.get(j);
-					int ny = (int) (nodeCoor/100_000);
-					int nx = (int) (nodeCoor%100_000);
-					
-					if (Math.abs(y-ny) + Math.abs(x-nx) <= 1000) {
-						union(i, j);
+				for (Node node = nodes; node != null; node = node.next) {
+					if (Math.abs(y-node.y) + Math.abs(x-node.x) <= 1000) {
+						union(i, node.no);
 					}
 				}
-				long coor = (long)y*100_000 + x;
-				nodes.add(coor);
+				nodes = new Node(y, x, i, nodes);
 			}
-			
 			
 			sb.append(union(0, N+1) ? "sad" : "happy").append("\n");
 		}

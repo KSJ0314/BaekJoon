@@ -19,8 +19,8 @@ public class Solution {
 	}
 	static int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
 	static int N, M;
-	static Cell[][] arr;
-	static PriorityQueue<Cell> pQ;
+	static int[][] arr, nextArr;
+	static ArrayList<Cell> list;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -42,35 +42,41 @@ public class Solution {
 
 	static void fnc() {
 		while (M-- > 0) {
-			arr = new Cell[N][N];
-			int size = pQ.size();
-			while (size-- > 0) {
-				Cell cell = pQ.poll();
+			Collections.sort(list);
+			nextArr = new int[N][N];
+			
+			int size = list.size();
+			for (int i = 0; i < size; i++) {
+				Cell cell = list.get(i);
+				if (arr[cell.y][cell.x] == 0) {
+					list.remove(cell);
+					i--;
+					size--;
+				}
+				
+				cell.cnt = arr[cell.y][cell.x];
+				arr[cell.y][cell.x] = 0;
+				
 				cell.y += dels[cell.delIdx][0];
 				cell.x += dels[cell.delIdx][1];
 				
-				if (arr[cell.y][cell.x] == null) {
-					arr[cell.y][cell.x] = cell;
-				} else {
-					arr[cell.y][cell.x].cnt += cell.cnt;
-				}
 				if (isEdge(cell.y, cell.x)) {
 					cell.cnt/=2;
 					cell.delIdx += cell.delIdx%2==0 ? 1 : -1;
 				}
+				
+				nextArr[cell.y][cell.x] += cell.cnt;
 			}
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < N; j++) {
-					if (arr[i][j] != null) pQ.offer(arr[i][j]);
-				}
-			}
+			arr = nextArr;
 		}
 	}
 
 	private static int calTotal() {
 		int total = 0;
-		while (!pQ.isEmpty()) {
-			total += pQ.poll().cnt;
+		for (Cell cell : list) {
+			if (arr[cell.y][cell.x] == 0) continue;
+			total += arr[cell.y][cell.x];
+			arr[cell.y][cell.x] = 0;
 		}
 		return total;
 	}
@@ -87,8 +93,8 @@ public class Solution {
 		M = Integer.parseInt(strs[1]);
 		int K = Integer.parseInt(strs[2]);
 		
-		arr = new Cell[N][N];
-		pQ = new PriorityQueue<>();
+		arr = new int[N][N];
+		list = new ArrayList<>();
 		
 		while (K-- >0){
 			strs =  br.readLine().split(" ");
@@ -97,27 +103,9 @@ public class Solution {
 			int cnt = Integer.parseInt(strs[2]);
 			int delIdx = Integer.parseInt(strs[3])-1;
 			
-			Cell cell = new Cell(i, j, cnt, delIdx);
-			pQ.offer(cell);
+			list.add(new Cell(i, j, cnt, delIdx));
+			arr[i][j] = cnt;
 		}
 	}
 	
-	
-	
-	
-	static void print () {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				if (arr[i][j] != null) {
-					System.out.print(arr[i][j].cnt);
-				} else {
-					System.out.print("X");
-				}
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
-		System.out.println("=====");
-	}
-
 }

@@ -1,108 +1,123 @@
 import java.io.*;
+import java.util.*;
 
 public class Solution {
-	static final int[][] dels = {null,{-1,0},{1,0},{0,-1},{0,1}};	// 상:1, 하:2, 좌:3, 우:4
-	static int N,M,K, remain;
-	static int[][][] prevArr, nextArr;
+	static class Cell implements Comparable<Cell>{
+		int y, x, cnt, delIdx;
+
+		public Cell(int y, int x, int cnt, int delIdx) {
+			this.y = y;
+			this.x = x;
+			this.cnt = cnt;
+			this.delIdx = delIdx;
+		}
+
+		@Override
+		public int compareTo(Cell o) {
+			return Integer.compare(this.cnt, o.cnt) * -1;
+		}
+	}
+	static int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
+	static int N, M;
+	static Cell[][] arr;
+	static PriorityQueue<Cell> pQ;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
-		int t = Integer.parseInt(br.readLine());
-		
-		for (int test_case = 1; test_case <= t; test_case++) {
+
+		int T = Integer.parseInt(br.readLine());
+		for (int t = 1; t <= T; t++) {
+			sb.append("#"+t+" ");
+			
 			init(br);
-			
 			fnc();
+			sb.append(calTotal());
 			
-			sb.append("#"+test_case+" ").append(remain).append("\n");
+			sb.append("\n");
 		}
-		System.out.println(sb.toString());
 		
+		System.out.println(sb);
 	}
 
-	private static void fnc() {
-		while (M-- >0) {
-			moveMicrobe();
-			selectDirection();
-			prevArr = nextArr;
-		}
-	}
-
-	private static void moveMicrobe() {
-		nextArr = new int[N][N][2];
-		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				if (prevArr[i][j][0] == 0) continue;
-				int direction = prevArr[i][j][1];
-				int[] del = dels[direction];
+	static void fnc() {
+		while (M-- > 0) {
+			arr = new Cell[N][N];
+			int size = pQ.size();
+			while (size-- > 0) {
+				Cell cell = pQ.poll();
+				cell.y += dels[cell.delIdx][0];
+				cell.x += dels[cell.delIdx][1];
 				
-				int ni = i+del[0];
-				int nj = j+del[1];
-				nextArr[ni][nj][0] += prevArr[i][j][0];
-				if (isEndLine(ni,nj)) {
-					remain -= (nextArr[ni][nj][0]/2) + (nextArr[ni][nj][0]%2);
-					nextArr[ni][nj][0] /= 2;
-					
-					nextArr[ni][nj][1] = direction;
-					nextArr[ni][nj][1] += direction%2==0 ? -1 : +1;
+				if (arr[cell.y][cell.x] == null) {
+					arr[cell.y][cell.x] = cell;
+				} else {
+					arr[cell.y][cell.x].cnt += cell.cnt;
+				}
+				if (isEdge(cell.y, cell.x)) {
+					cell.cnt/=2;
+					cell.delIdx += cell.delIdx%2==0 ? 1 : -1;
+				}
+			}
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					if (arr[i][j] != null) pQ.offer(arr[i][j]);
 				}
 			}
 		}
-		
 	}
-	
-	private static void selectDirection() {
-		for (int i = 1; i < N-1; i++) {
-			for (int j = 1; j < N-1; j++) {
-				if (nextArr[i][j][0] == 0) continue;
-				
-				int nD = 0;
-				int nC = 0;
-				for (int k = 1; k < dels.length; k++) {
-					int ni = i+dels[k][0];
-					int nj = j+dels[k][1];
-					int pc = prevArr[ni][nj][0];
-					int pd = prevArr[ni][nj][1];
-					if ((k == 1 && pd == 2)
-							|| (k == 2 && pd == 1)
-							|| (k == 3 && pd == 4)
-							|| (k == 4 && pd == 3)) {
-						if (nC < pc) {
-							nC = pc;
-							nD = pd;
-						}
-					}
-				}
-				nextArr[i][j][1] = nD;
-			}
+
+	private static int calTotal() {
+		int total = 0;
+		while (!pQ.isEmpty()) {
+			total += pQ.poll().cnt;
 		}
+		return total;
 	}
 	
-	public static boolean isEndLine(int y, int x) {
+	static boolean isEdge(int y, int x) {
 		return y==0 || y==N-1 || x==0 || x==N-1;
 	}
-	
-	public static void init(BufferedReader br) throws IOException {
-		String[] strs = br.readLine().split(" ");
+
+	static void init(BufferedReader br) throws IOException {
+		String[] strs;
+		strs =  br.readLine().split(" ");
+		
 		N = Integer.parseInt(strs[0]);
 		M = Integer.parseInt(strs[1]);
-		K = Integer.parseInt(strs[2]);
-		prevArr = new int[N][N][2];
-		remain = 0;
+		int K = Integer.parseInt(strs[2]);
 		
-		for (int i = 0; i < K; i++) {
-			strs = br.readLine().split(" ");
-			int y = Integer.parseInt(strs[0]);
-			int x = Integer.parseInt(strs[1]);
-			int count = Integer.parseInt(strs[2]);
-			int direction = Integer.parseInt(strs[3]);
-			prevArr[y][x][0] = count;
-			prevArr[y][x][1] = direction;
+		arr = new Cell[N][N];
+		pQ = new PriorityQueue<>();
+		
+		while (K-- >0){
+			strs =  br.readLine().split(" ");
+			int i = Integer.parseInt(strs[0]);
+			int j = Integer.parseInt(strs[1]);
+			int cnt = Integer.parseInt(strs[2]);
+			int delIdx = Integer.parseInt(strs[3])-1;
 			
-			remain += count;
+			Cell cell = new Cell(i, j, cnt, delIdx);
+			pQ.offer(cell);
 		}
+	}
+	
+	
+	
+	
+	static void print () {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (arr[i][j] != null) {
+					System.out.print(arr[i][j].cnt);
+				} else {
+					System.out.print("X");
+				}
+				System.out.print(" ");
+			}
+			System.out.println();
+		}
+		System.out.println("=====");
 	}
 
 }

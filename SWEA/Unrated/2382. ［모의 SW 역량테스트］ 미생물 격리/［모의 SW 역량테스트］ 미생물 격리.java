@@ -20,7 +20,7 @@ public class Solution {
 	static int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
 	static int N, M;
 	static int[][] arr, nextArr;
-	static ArrayList<Cell> list;
+	static PriorityQueue<Cell> pQ, nextPQ;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -42,17 +42,12 @@ public class Solution {
 
 	static void fnc() {
 		while (M-- > 0) {
-			Collections.sort(list);
 			nextArr = new int[N][N];
-			
-			int size = list.size();
-			for (int i = 0; i < size; i++) {
-				Cell cell = list.get(i);
-				if (arr[cell.y][cell.x] == 0) {
-					list.remove(cell);
-					i--;
-					size--;
-				}
+			int size = pQ.size();
+			while (size-- > 0) {
+				Cell cell = pQ.poll();
+				
+				if (arr[cell.y][cell.x] == 0) continue;
 				
 				cell.cnt = arr[cell.y][cell.x];
 				arr[cell.y][cell.x] = 0;
@@ -66,17 +61,18 @@ public class Solution {
 				}
 				
 				nextArr[cell.y][cell.x] += cell.cnt;
+				nextPQ.offer(cell);
 			}
 			arr = nextArr;
+			pQ = nextPQ;
+			nextPQ = new PriorityQueue<>();
 		}
 	}
 
 	private static int calTotal() {
 		int total = 0;
-		for (Cell cell : list) {
-			if (arr[cell.y][cell.x] == 0) continue;
-			total += arr[cell.y][cell.x];
-			arr[cell.y][cell.x] = 0;
+		while (!pQ.isEmpty()) {
+			total += pQ.poll().cnt;
 		}
 		return total;
 	}
@@ -94,7 +90,8 @@ public class Solution {
 		int K = Integer.parseInt(strs[2]);
 		
 		arr = new int[N][N];
-		list = new ArrayList<>();
+		pQ = new PriorityQueue<>();
+		nextPQ = new PriorityQueue<>();
 		
 		while (K-- >0){
 			strs =  br.readLine().split(" ");
@@ -103,7 +100,7 @@ public class Solution {
 			int cnt = Integer.parseInt(strs[2]);
 			int delIdx = Integer.parseInt(strs[3])-1;
 			
-			list.add(new Cell(i, j, cnt, delIdx));
+			pQ.offer(new Cell(i, j, cnt, delIdx));
 			arr[i][j] = cnt;
 		}
 	}

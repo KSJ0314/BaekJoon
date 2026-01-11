@@ -1,36 +1,34 @@
+import java.util.*;
+
 class Solution {
-	int n;
-	boolean[][] isConnectOrigin;
-	boolean[][] isConnect;
+	ArrayList<Integer>[] list;
+	int answer, n;
 	
     public int solution(int n, int[][] wires) {
     	this.n = n;
-    	isConnectOrigin = new boolean[n+1][n+1];
-    	isConnect = new boolean[n+1][n+1];
-    	for (int[] wire : wires) {
-    		isConnectOrigin[wire[0]][wire[1]] = true;
-    		isConnectOrigin[wire[1]][wire[0]] = true;
+    	answer = Integer.MAX_VALUE;
+    	list = new ArrayList[n+1];
+    	for (int i = 1; i <= n; i++) {
+    		list[i] = new ArrayList<>();
     	}
-    	int minAbs = Integer.MAX_VALUE;
+    	
     	for (int[] wire : wires) {
-    		for (int i = 0; i <= n; i++) {
-    			isConnect[i] = isConnectOrigin[i].clone();
-			}
-			isConnect[wire[0]][wire[1]] = false;
-			isConnect[wire[1]][wire[0]] = false;
-    		minAbs = Math.min(minAbs, Math.abs(n-calcTreeSize(wire[0])*2));
+    		list[wire[0]].add(wire[1]);
+    		list[wire[1]].add(wire[0]);
     	}
-        return minAbs;
+    	
+    	calTreeSize(1, 0);
+        return answer;
     }
 
-	public int calcTreeSize(int idx) {
+	public int calTreeSize(int idx, int pIdx) {
 		int size = 1;
-		for (int i = 0; i <= n; i++) {
-			if (!isConnect[idx][i]) continue;
-			isConnect[idx][i] = false;
-			isConnect[i][idx] = false;
-			size += calcTreeSize(i);
+		for (int child : list[idx]) {
+			if (child == pIdx) continue;
+			size += calTreeSize(child, idx);
 		}
+		int diff = Math.abs((n-size) - size);
+		answer = Math.min(answer, diff);
 		return size;
 	}
 }

@@ -4,33 +4,20 @@ import java.util.*;
 public class Main {
 	static int n;
 	static int[] arr;
-	static int[] dp;
-	// dp[i][0] = i x | i-1 x | i-2 x
-	// dp[i][1] = i x | i-1 x | i-2 o
-	// dp[i][2] = i x | i-1 o | i-2 x
-	// dp[i][3] = i x | i-1 o | i-2 o
-	// dp[i][4] = i o | i-1 x | i-2 x
-	// dp[i][5] = i o | i-1 x | i-2 o
-	// dp[i][6] = i o | i-1 o | i-2 x
+	static int[][] dp;
+	// dp[0] = i x | i-1 x
+	// dp[1] = i o | i-1 x
+	// dp[2] = i o | i-1 o
 	
 	public static void main(String[] args) throws IOException {
 		init();
 		
-		for (int i = 0; i < n; i++) {
-			int xx = Math.max(dp[0], dp[1]);
-			int xo = Math.max(dp[2], dp[3]);
-			int ox = Math.max(dp[4], dp[5]);
-			int oo = dp[6];
-			
-			dp[0] = xx;
-			dp[1] = xo;
-			dp[2] = ox;
-			dp[3] = oo;
-			dp[4] = xx + arr[i];
-			dp[5] = xo + arr[i];
-			dp[6] = ox + arr[i];
+		for (int i = 1; i <= n; i++) {
+			dp[i][0] = calMax(dp[i-1]);
+			dp[i][1] = dp[i-1][0] + arr[i];
+			dp[i][2] = dp[i-1][1] + arr[i];
 		}
-		System.out.println(calMax(dp));
+		System.out.println(calMax(dp[n]));
 	}
 	
 	private static int calMax(int[] nums) {
@@ -48,9 +35,9 @@ public class Main {
 		strs = br.readLine().split(" ");
 		n = Integer.parseInt(strs[0]);
 		
-		arr = new int[n];
-		dp = new int[7];
-		for (int i = 0; i < n; i++) {
+		arr = new int[n+1];
+		dp = new int[n+1][3];
+		for (int i = 1; i <= n; i++) {
 			strs = br.readLine().split(" ");
 			arr[i] = Integer.parseInt(strs[0]);
 		}

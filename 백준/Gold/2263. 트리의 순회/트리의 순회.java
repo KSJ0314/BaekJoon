@@ -4,15 +4,11 @@ import java.util.*;
 public class Main {
 	static int n;
 	static int[] inOrdersIdx, postOrders;
-	static Deque<Integer> preOrders;
 	static StringBuilder sb;
 	
 	public static void main(String[] args) throws IOException {
 		init();
 		recursion(0, n-1, n-1);
-		for (int n : preOrders) {
-			sb.append(n).append(" ");
-		}
 		System.out.println(sb.toString().trim());
 	}
 
@@ -20,7 +16,7 @@ public class Main {
 		if (s > e) return;
 		
 		int root = postOrders[r];
-		preOrders.addLast(root);
+		sb.append(root).append(" ");
 		
 		int idx = inOrdersIdx[root];
 		recursion(s, idx-1, r-(e-idx)-1);
@@ -37,7 +33,6 @@ public class Main {
 		
 		inOrdersIdx = new int[n+1];
 		postOrders = new int[n];
-		preOrders = new ArrayDeque<>();
 
 		strs = br.readLine().split(" ");
 		for (int i = 0; i < n; i++) {

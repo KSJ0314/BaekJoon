@@ -2,99 +2,96 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-	static class Coor{
+	static class Node {
 		double x, y;
 
-		public Coor(double x, double y) {
+		public Node(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
 	}
-	
-	static class Vertex implements Comparable<Vertex>{
+
+	static class Vertex implements Comparable<Vertex> {
 		int no;
-		double dis;
-		
-		public Vertex(int no, double dis) {
+		double dist;
+
+		public Vertex(int no, double dist) {
 			this.no = no;
-			this.dis = dis;
+			this.dist = dist;
 		}
 
 		@Override
-		public int compareTo(Main.Vertex o) {
-			return Double.compare(this.dis, o.dis);
+		public int compareTo(Vertex o) {
+			return Double.compare(this.dist, o.dist);
 		}
 	}
-	
-	static int n;
-	static Coor[] coors;
-	static double[] minDis;
-	static PriorityQueue<Vertex> pQ;
+
+	static int N;
+	static Node[] nodes;
+	static double[] dists;
+	static PriorityQueue<Vertex> pq;
 
 	public static void main(String[] args) throws IOException {
 		init();
-		dij();
-		System.out.println(minDis[1] / 5);
-	}
-
-	static void dij() {
-		while (!pQ.isEmpty()) {
-			Vertex vertex = pQ.poll();
-			if (vertex.no == 1) break;
-			if (vertex.dis > minDis[vertex.no]) continue;
+		
+		while (!pq.isEmpty()) {
+			Vertex crt = pq.poll();
+			if (crt.no == 1) break;
+			if (crt.dist > dists[crt.no]) continue;
 			
-			for (int i = 1; i < n+2; i++) {
-				double dis = vertex.dis + 10 + Math.abs(50-calDis(vertex.no, i));
-				if (minDis[i] <= dis) continue;
-				minDis[i] = dis;
-				pQ.offer(new Vertex(i, dis));
+			for (int i = 1; i < N+2; i++) {
+				if (i == crt.no) continue;
+				
+				double dist = crt.dist + Math.abs(calDist(nodes[i], nodes[crt.no]) - 50) + 10;
+				if (dists[i] <= dist) continue;
+				dists[i] = dist;
+				pq.offer(new Vertex(i, dist));
 			}
 		}
-	}
-	
-	static double calDis(int o1, int o2) {
-		return Math.sqrt(Math.pow(Math.abs(coors[o1].x-coors[o2].x),2) + Math.pow(Math.abs(coors[o1].y-coors[o2].y),2));
+		System.out.println(dists[1]/5);
 	}
 
-	static void init() throws IOException {
+	private static void init() throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String[] strs;
+
+		double x,y;
 		
 		strs = br.readLine().split(" ");
-		double sX = Double.parseDouble(strs[0]);
-		double sY = Double.parseDouble(strs[1]);
+		x = Double.parseDouble(strs[0]);
+		y = Double.parseDouble(strs[1]);
+		Node sNode = new Node(x, y);
 		
 		strs = br.readLine().split(" ");
-		double eX = Double.parseDouble(strs[0]);
-		double eY = Double.parseDouble(strs[1]);
-		
-		n = Integer.parseInt(br.readLine());
-		coors = new Coor[n+2];
-		minDis = new double[n+2];
-		
-		coors[0] = new Coor(sX, sY);
-		coors[1] = new Coor(eX, eY);
-		for (int i = 2; i < n+2; i++) {
+		x = Double.parseDouble(strs[0]);
+		y = Double.parseDouble(strs[1]);
+		Node eNode = new Node(x, y);
+
+		strs = br.readLine().split(" ");
+		N = Integer.parseInt(strs[0]);	
+		nodes = new Node[N+2];		
+		nodes[0] = sNode;
+		nodes[1] = eNode;
+
+		for (int i = 2; i < N+2; i++) {
 			strs = br.readLine().split(" ");
-			double x = Double.parseDouble(strs[0]);
-			double y = Double.parseDouble(strs[1]);
-			
-			coors[i] = new Coor(x, y);
+			x = Double.parseDouble(strs[0]);
+			y = Double.parseDouble(strs[1]);
+
+			Node node = new Node(x, y);
+			nodes[i] = node;
 		}
 		
-		for (int i = 0; i < n+2; i++) {
-			minDis[i] = Double.MAX_VALUE;
+		pq = new PriorityQueue<>();		
+		dists = new double[N+2];
+		for (int i = 1; i < N+2; i++) {
+			dists[i] = calDist(nodes[0], nodes[i]);
+			pq.add(new Vertex(i, dists[i]));
 		}
 		
-		minDis[0] = 0;
-		minDis[1] = calDis(0,1);
-		
-		pQ = new PriorityQueue<>();
-		
-		for (int i = 1; i < n+2; i++) {
-			double dis = calDis(0, i);
-			minDis[i] = dis;
-			pQ.offer(new Vertex(i, dis));
-		}
+	}
+
+	private static double calDist(Node node, Node node2) {
+		return Math.sqrt(Math.pow((node.x - node2.x), 2) + Math.pow((node.y - node2.y), 2));
 	}
 }

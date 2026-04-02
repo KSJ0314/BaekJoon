@@ -1,77 +1,82 @@
 import java.io.*;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 
 public class Main {
-	static final int[][] dels = {{-1,0},{1,0},{0,-1},{0,1}};
 	static int N, M, K;
-	static int[][] arr;
+	static int[][] map;
 	static boolean[][][] visited;
-	static Deque<int[]> deque = new ArrayDeque<>();
-
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		init(br);
-		int cnt = 0;
-		while (!deque.isEmpty()) {
-			cnt++;
-			if (bfs()) {
-				System.out.println(cnt);
-				return;
-			}
-		}
-		System.out.println(-1);
-	}
+	static int[][] dels = {{-1,0},{0,1},{1,0},{0,-1}};
 	
-	static boolean bfs() {
-		int size = deque.size();
-		
-		while (size-- > 0) {
-			int[] coors = deque.pollFirst();
-			int y = coors[0], x = coors[1], k = coors[2];
-			if (y==N-1 && x==M-1) return true;
-			
-			for (int[] del : dels) {
-				int ny = y+del[0], nx = x+del[1], nk = k;
-				
-				if (!isIn(ny, nx)) continue;
-				
-				if (arr[ny][nx] == 1) {
-					if (nk == 0) continue;
-					nk--;
-				}
-				
-				if (visited[ny][nx][nk]) continue;
-				visited[ny][nx][nk] = true;
-				
-				deque.offerLast(new int[] {ny,nx,nk});
-			}
-		}
-		
-		return false;
+	public static void main(String[] args) throws IOException {
+		init();
 	}
 
-	static boolean isIn(int y, int x) {
-		return y >= 0 && y < N && x >= 0 && x < M;
-	}
-
-	static void init(BufferedReader br) throws IOException {
-		String[] strs = br.readLine().split(" ");
+	private static void init() throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String[] strs;
+		
+		strs = br.readLine().split(" ");
 		N = Integer.parseInt(strs[0]);
 		M = Integer.parseInt(strs[1]);
 		K = Integer.parseInt(strs[2]);
-		deque.offerLast(new int[] {0,0,K});
 		
-		arr = new int[N][M];
+		
+		map = new int[N][M];
 		visited = new boolean[N][M][K+1];
-		visited[0][0][K] = true;
 		
 		for (int i = 0; i < N; i++) {
 			strs = br.readLine().split("");
 			for (int j = 0; j < M; j++) {
-				arr[i][j] = Integer.parseInt(strs[j]);
+				map[i][j] = Integer.parseInt(strs[j]);
 			}
 		}
+		
+		// 0은 이동 가능, 1은 이동 불가능
+		ArrayDeque<int[]> deq = new ArrayDeque<>();
+		deq.add(new int[] {0,0,K});
+		for (int i = K; i >= 0; i--) {
+			visited[0][0][i] = true;
+		}
+		int cnt = 0;
+		
+		while(!deq.isEmpty()) {
+			int size = deq.size();
+			cnt++;
+			while (size-- > 0) {
+				int[] crt = deq.poll();
+				int y = crt[0];
+				int x = crt[1];
+				if (y == N-1 && x == M-1) {
+					System.out.println(cnt);
+					return;
+				}
+				int depth = crt[2];
+				
+				for (int[] del : dels) {
+					int ny = y + del[0];
+					int nx = x + del[1];
+					if (!isIn(ny, nx)) continue;
+					if (map[ny][nx] == 1) {
+						if (depth == 0) continue;
+						if (visited[ny][nx][depth-1]) continue;
+						for (int i = depth-1; i >= 0; i--) {
+							visited[ny][nx][i] = true;
+						}
+						deq.add(new int[] {ny, nx, depth-1});
+					} else {
+						if (visited[ny][nx][depth]) continue;
+						for (int i = depth; i >= 0; i--) {
+							visited[ny][nx][i] = true;
+						}
+						deq.add(new int[] {ny, nx, depth});
+					}
+				}
+			}
+		}
+		System.out.println(-1);
 	}
-	
+
+	private static boolean isIn(int y, int x) {
+		return y >= 0 && y < N && x >= 0 && x < M;
+	}
 }

@@ -31,12 +31,9 @@ public class Main {
 			}
 		}
 		
-		// 0은 이동 가능, 1은 이동 불가능
 		ArrayDeque<int[]> deq = new ArrayDeque<>();
 		deq.add(new int[] {0,0,K});
-		for (int i = K; i >= 0; i--) {
-			visited[0][0][i] = true;
-		}
+		visited[0][0][K] = true;
 		int cnt = 0;
 		
 		while(!deq.isEmpty()) {
@@ -46,30 +43,22 @@ public class Main {
 				int[] crt = deq.poll();
 				int y = crt[0];
 				int x = crt[1];
+				int depth = crt[2];
+				
 				if (y == N-1 && x == M-1) {
 					System.out.println(cnt);
 					return;
 				}
-				int depth = crt[2];
 				
 				for (int[] del : dels) {
 					int ny = y + del[0];
 					int nx = x + del[1];
 					if (!isIn(ny, nx)) continue;
-					if (map[ny][nx] == 1) {
-						if (depth == 0) continue;
-						if (visited[ny][nx][depth-1]) continue;
-						for (int i = depth-1; i >= 0; i--) {
-							visited[ny][nx][i] = true;
-						}
-						deq.add(new int[] {ny, nx, depth-1});
-					} else {
-						if (visited[ny][nx][depth]) continue;
-						for (int i = depth; i >= 0; i--) {
-							visited[ny][nx][i] = true;
-						}
-						deq.add(new int[] {ny, nx, depth});
-					}
+					int nDepth = map[ny][nx] == 1 ? depth-1 : depth;
+					if (nDepth == -1) continue;
+					if (visited[ny][nx][nDepth]) continue;
+					visited[ny][nx][nDepth] = true;
+					deq.add(new int[] {ny, nx, nDepth});
 				}
 			}
 		}

@@ -20,18 +20,10 @@ public class Main {
 	static int N, M, cnt;
 	static int[][] coors;
 	static int[] parents;
+	static PriorityQueue<Edge> pq;
 	
 	public static void main(String[] args) throws IOException {
 		init();
-		PriorityQueue<Edge> pq = new PriorityQueue<>();
-		
-		for (int i = 1; i < N; i++) {
-			for (int j = i+1; j <= N; j++) {
-				if (isUnion(i, j)) continue;
-				double dist = Math.sqrt(Math.pow(Math.abs(coors[i][0] - coors[j][0]),2) + Math.pow(Math.abs(coors[i][1] - coors[j][1]),2));
-				pq.add(new Edge(i, j, dist));
-			}
-		}
 		
 		double totalDist = 0;
 		while (!pq.isEmpty() && cnt < N) {
@@ -42,7 +34,32 @@ public class Main {
 		}
 		System.out.printf("%.2f", totalDist);
 	}
+
+	private static void initEdge() {
+		for (int i = 1; i < N; i++) {
+			for (int j = i+1; j <= N; j++) {
+				if (isUnion(i, j)) continue;
+				double dist = Math.sqrt(Math.pow(Math.abs(coors[i][0] - coors[j][0]),2) + Math.pow(Math.abs(coors[i][1] - coors[j][1]),2));
+				pq.add(new Edge(i, j, dist));
+			}
+		}
+	}
+
+	private static void makeUnion() {
+		parents = new int[N+1];
+		for (int i = 1; i <= N; i++) {
+			parents[i] = i;
+		}
+	}
+
+	private static int find(int a) {
+		if (a == parents[a]) return a;
+		return parents[a] = find(parents[a]);
+	}
 	
+	private static boolean isUnion(int a, int b) {
+		return find(a) == find(b);
+	}
 
 	private static boolean unionFind(int a, int b) {
 		int aR = find(a);
@@ -54,23 +71,6 @@ public class Main {
 		parents[bR] = aR;
 		return true;
 	}
-	
-	private static boolean isUnion(int a, int b) {
-		return find(a) == find(b);
-	}
-
-	private static int find(int a) {
-		if (a == parents[a]) return a;
-		return parents[a] = find(parents[a]);
-	}
-
-	private static void makeUnion() {
-		parents = new int[N+1];
-		for (int i = 1; i <= N; i++) {
-			parents[i] = i;
-		}
-	}
-
 
 	private static void init() throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -81,7 +81,7 @@ public class Main {
 		M = Integer.parseInt(strs[1]);
 
 		coors = new int[N+1][2];
-		makeUnion();
+		pq = new PriorityQueue<>();
 		
 		for (int i = 1; i <= N; i++) {
 			strs = br.readLine().split(" ");
@@ -89,11 +89,15 @@ public class Main {
 			coors[i][1] = Integer.parseInt(strs[1]);
 		}
 		
+		makeUnion();
+		
 		for (int i = 0; i < M; i++) {
 			strs = br.readLine().split(" ");
 			int a = Integer.parseInt(strs[0]);
 			int b = Integer.parseInt(strs[1]);
 			unionFind(a, b);
 		}
+		
+		initEdge();
 	}
 }

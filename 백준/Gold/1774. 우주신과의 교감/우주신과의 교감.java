@@ -27,6 +27,7 @@ public class Main {
 		
 		for (int i = 1; i < N; i++) {
 			for (int j = i+1; j <= N; j++) {
+				if (isUnion(i, j)) continue;
 				double dist = Math.sqrt(Math.pow(Math.abs(coors[i][0] - coors[j][0]),2) + Math.pow(Math.abs(coors[i][1] - coors[j][1]),2));
 				pq.add(new Edge(i, j, dist));
 			}
@@ -35,7 +36,7 @@ public class Main {
 		double totalDist = 0;
 		while (!pq.isEmpty() && cnt < N) {
 			Edge edge = pq.poll();
-			if (union(edge.a, edge.b)) {
+			if (unionFind(edge.a, edge.b)) {
 				totalDist += edge.dist;
 			}
 		}
@@ -43,7 +44,7 @@ public class Main {
 	}
 	
 
-	private static boolean union(int a, int b) {
+	private static boolean unionFind(int a, int b) {
 		int aR = find(a);
 		int bR = find(b);
 		
@@ -52,6 +53,10 @@ public class Main {
 		cnt++;
 		parents[bR] = aR;
 		return true;
+	}
+	
+	private static boolean isUnion(int a, int b) {
+		return find(a) == find(b);
 	}
 
 	private static int find(int a) {
@@ -88,7 +93,7 @@ public class Main {
 			strs = br.readLine().split(" ");
 			int a = Integer.parseInt(strs[0]);
 			int b = Integer.parseInt(strs[1]);
-			union(a, b);
+			unionFind(a, b);
 		}
 	}
 }

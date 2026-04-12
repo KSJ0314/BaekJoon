@@ -39,6 +39,7 @@ public class Main {
 		while (!pq.isEmpty()) {
 			Vertex crt = pq.poll();
 			
+			if (crt.no == v) break;
 			if (visited[crt.no]) continue;
 			visited[crt.no] = true;
 			

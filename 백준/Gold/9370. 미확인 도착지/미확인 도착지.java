@@ -27,10 +27,6 @@ public class Main {
 		}
 	}
 	
-	// 첫 번째 줄에 3개의 정수 n, m, t (2 ≤ n ≤ 2 000, 1 ≤ m ≤ 50 000 and 1 ≤ t ≤ 100)가 주어진다. 각각 교차로, 도로, 목적지 후보의 개수이다.
-	// 두 번째 줄에 3개의 정수 s, g, h (1 ≤ s, g, h ≤ n)가 주어진다. s는 예술가들의 출발지이고, g, h는 문제 설명에 나와 있다. (g ≠ h)
-	// 그 다음 m개의 각 줄마다 3개의 정수 a, b, d (1 ≤ a < b ≤ n and 1 ≤ d ≤ 1 000)가 주어진다. a와 b 사이에 길이 d의 양방향 도로가 있다는 뜻이다.
-	// 그 다음 t개의 각 줄마다 정수 x가 주어지는데, t개의 목적지 후보들을 의미한다. 이 t개의 지점들은 서로 다른 위치이며 모두 s와 같지 않다.
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String[] strs;
@@ -86,11 +82,7 @@ public class Main {
 				Vertex crt = pq.poll();
 				
 				if (minDists[crt.no] < crt.dist) continue;
-				if (xs.contains(crt.no)) {
-					if (crt.dist % 2 == 1) {
-						res.add(crt.no);
-					}
-				}
+				
 				
 				for (Node node = nodes[crt.no]; node != null; node = node.next) {
 					if (minDists[node.from] > crt.dist + node.dist) {
@@ -98,6 +90,11 @@ public class Main {
 						minDists[node.from] = dist;
 						pq.offer(new Vertex(node.from, dist));
 					}
+				}
+			}
+			for (int x : xs) {
+				if (minDists[x] != Integer.MAX_VALUE && minDists[x] % 2 == 1) {
+					res.add(x);
 				}
 			}
 			for (int r : res) {

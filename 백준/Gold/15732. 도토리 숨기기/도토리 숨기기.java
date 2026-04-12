@@ -32,6 +32,7 @@ public class Main {
 				if (mid < rule[0]) continue;
 				int end = Math.min(rule[1], mid);
 				cnt += (end-rule[0])/rule[2] +1;
+                if (cnt >= D) break;
 			}
 			
 			if (cnt >= D) {

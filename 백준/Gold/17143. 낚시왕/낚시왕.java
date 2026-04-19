@@ -41,10 +41,7 @@ class Main {
 
         		if (shark.d == 1 || shark.d == 2) {
         		    int len = R - 1;
-
-        		    int pos;
-        		    if (shark.d == 2) pos = shark.r - 1;
-        		    else pos = 2 * len - (shark.r - 1);
+        		    int pos = (shark.d == 2) ? shark.r - 1 : 2 * len - (shark.r - 1);
 
         		    pos = (pos + shark.s) % (2 * len);
 
@@ -57,10 +54,7 @@ class Main {
         		    }
         		} else {
         		    int len = C - 1;
-
-        		    int pos;
-        		    if (shark.d == 3) pos = shark.c - 1;
-        		    else pos = 2 * len - (shark.c - 1);
+        		    int pos = (shark.d == 3) ? shark.c - 1 : 2 * len - (shark.c - 1);
 
         		    pos = (pos + shark.s) % (2 * len);
 

@@ -14,7 +14,7 @@ class Main {
 	
 	static int N;
 	static int[][] map;
-	static HashMap<Integer, Character> dirChange;
+	static int[] dirChange;
 	static LinkedList<Snake> snake;
 	
 	
@@ -45,11 +45,9 @@ class Main {
         	
     		map[nr][nc] = 1;
         	
-        	if (dirChange.containsKey(time)) {
-        		dir += dirChange.get(time) == 'D' ? 1 : -1;
-        		if (dir == -1) dir = 3;
-        		if (dir == 4) dir = 0;
-        	}
+    		dir += dirChange[time];
+    		if (dir == -1) dir = 3;
+    		else if (dir == 4) dir = 0;
 		}
         
         System.out.println(time);
@@ -76,14 +74,13 @@ class Main {
         	map[r][c] = 2;
 		}
         
-        dirChange = new HashMap<>();
+        dirChange = new int[10001];
         inputs = br.readLine().split(" ");
         int L = Integer.parseInt(inputs[0]);
         for (int i = 0; i < L; i++) {
         	inputs = br.readLine().split(" ");
         	int X = Integer.parseInt(inputs[0]);
-        	char C = inputs[1].charAt(0);
-        	dirChange.put(X, C);
+        	dirChange[X] = inputs[1].charAt(0) == 'D' ? 1 : -1;
         }
         
         snake = new LinkedList<>();
